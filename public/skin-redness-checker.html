@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skin Redness Checker</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #fdf2f2, #f5f9ff);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 22px; color: #333; margin-bottom: 6px; }
+  p.subtitle { color: #777; font-size: 14px; margin-bottom: 20px; }
+  .upload-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: block;
+  }
+  .upload-box:hover { border-color: #f87171; background: #fff7f7; }
+  input[type="file"] { display: none; }
+  #preview {
+    max-width: 100%;
+    max-height: 260px;
+    border-radius: 10px;
+    margin-top: 15px;
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #result {
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    display: none;
+  }
+  .normal { background: #ecfdf5; color: #059669; border: 1px solid #6ee7b7; }
+  .redmark { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+  .details { font-size: 12px; color: #999; margin-top: 10px; }
+  .disclaimer { font-size: 11px; color: #aaa; margin-top: 20px; line-height: 1.4; }
+  canvas { display: none; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🖐️ Skin Redness Checker</h1>
+  <p class="subtitle">Hand ki photo upload karo, tool check karega ki skin par red mark hai ya normal skin hai.</p>
+
+  <label class="upload-box" for="fileInput">
+    📷 Photo yahan click karke upload karo
+  </label>
+  <input type="file" id="fileInput" accept="image/*">
+
+  <img id="preview" alt="preview">
+  <canvas id="canvas"></canvas>
+
+  <div id="result"></div>
+  <div class="details" id="details"></div>
+
+  <p class="disclaimer">
+    Note: Yeh ek simple color-analysis tool hai, medical diagnosis nahi hai.
+    Agar skin me koi real problem/rash/injury lag rahi ho toh doctor se zaroor consult karo.
+  </p>
+</div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const canvas = document.getElementById('canvas');
+const resultDiv = document.getElementById('result');
+const detailsDiv = document.getElementById('details');
+
+fileInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    preview.src = evt.target.result;
+    preview.style.display = 'block';
+    preview.onload = function() {
+      analyzeImage(preview);
+    };
+  };
+  reader.readAsDataURL(file);
+});
+
+function analyzeImage(img) {
+  const ctx = canvas.getContext('2d');
+  const maxDim = 300;
+  const scale = Math.min(maxDim / img.naturalWidth, maxDim / img.naturalHeight, 1);
+  canvas.width = img.naturalWidth * scale;
+  canvas.height = img.naturalHeight * scale;
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  let skinPixelCount = 0;
+  let redMarkPixelCount = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const a = data[i + 3];
+
+    if (a < 50) continue;
+    if (r > 235 && g > 235 && b > 235) continue;
+
+    const isSkinTone = r > 95 && g > 40 && b > 20 &&
+      (Math.max(r, g, b) - Math.min(r, g, b)) > 15 &&
+      Math.abs(r - g) > 10 && r > g && r > b;
+
+    if (!isSkinTone) continue;
+
+    skinPixelCount++;
+
+    const rednessScore = r - (g + b) / 2;
+    if (rednessScore > 45 && r > 150) {
+      redMarkPixelCount++;
+    }
+  }
+
+  const redRatio = skinPixelCount > 0 ? (redMarkPixelCount / skinPixelCount) : 0;
+
+  resultDiv.style.display = 'block';
+  detailsDiv.textContent = `Analyzed skin pixels: ${skinPixelCount}, red-flagged: ${redMarkPixelCount} (${(redRatio * 100).toFixed(1)}%)`;
+
+  if (redRatio > 0.03) {
+    resultDiv.className = 'redmark';
+    resultDiv.textContent = '🔴 Red mark / redness detected on skin';
+  } else {
+    resultDiv.className = 'normal';
+    resultDiv.textContent = '✅ Normal skin detected (no red mark found)';
+  }
+}
+</script>
+
+</body>
+</html>

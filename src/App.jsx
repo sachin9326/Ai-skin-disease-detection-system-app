@@ -12,6 +12,7 @@ import DoctorDashboard from './components/DoctorDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import SettingsModal from './components/SettingsModal';
 import AuthModal from './components/AuthModal';
+import SkinRednessChecker from './components/SkinRednessChecker';
 import { getScanHistory, setScanHistory, saveScanToHistory, getAppSettings } from './utils/storage';
 import { getCurrentUser, logout as authLogout, fetchUserScansRemote } from './utils/auth';
 import { analyzeSkinImageLocally } from './utils/skinClassifier';
@@ -258,6 +259,10 @@ export default function App() {
 
         {activeTab === 'locator' && (
           <DermLocator />
+        )}
+
+        {activeTab === 'redness_checker' && (
+          <SkinRednessChecker />
         )}
 
       </main>
