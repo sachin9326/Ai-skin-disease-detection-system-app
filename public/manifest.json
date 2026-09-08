@@ -11,13 +11,19 @@
   "theme_color": "#418482",
   "icons": [
     {
-      "src": "/icon-512.png",
-      "sizes": "192x192 512x512",
+      "src": "/ai_skin_disease_detector_icon_S_512x512.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/ai_skin_disease_detector_icon_S_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ai_skin_disease_detector_icon_S_512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
