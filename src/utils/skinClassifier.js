@@ -422,6 +422,8 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
     depigmentationRatio = 0,
     scaleRatio = 0,
     pusRatio = 0,
+    papuleDotCount = 0,
+    papuleDotDensity = 0,
     asymmetryScore = 0,
     textureRoughness = 0,
     annularRingScore = 0,
@@ -430,7 +432,7 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
     lesionDiameterRatio = 0.1,
     colorClusterCount = 1,
     fitzpatrick = detectFitzpatrickSkinType()
-  } = features;
+  } = features || {};
 
   const loc = (symptoms.bodyLocation || '').toLowerCase();
   const duration = (symptoms.duration || '').toLowerCase();

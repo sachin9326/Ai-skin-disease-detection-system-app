@@ -77,7 +77,21 @@ export default function AnalysisView({
     );
   }
 
-  if (!analysisData) return null;
+  if (!analysisData) {
+    return (
+      <div className="w-full max-w-xl mx-auto p-6 bg-slate-900 border border-slate-800 rounded-3xl text-center space-y-4 my-8 shadow-xl">
+        <AlertTriangle className="w-12 h-12 text-amber-400 mx-auto" />
+        <h3 className="text-lg font-bold text-slate-100">Unable to Display Analysis Report</h3>
+        <p className="text-xs text-slate-400">The feature extraction completed with non-standard parameters. Please try scanning another image.</p>
+        <button
+          onClick={onNewScan}
+          className="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 text-xs font-black cursor-pointer"
+        >
+          Perform New Scan
+        </button>
+      </div>
+    );
+  }
 
   const {
     primaryCondition,
