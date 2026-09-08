@@ -1,27 +1,21 @@
 {
   "background_color": "#041917",
+  "theme_color": "#418482",
   "dir": "ltr",
   "display": "standalone",
   "name": "AI SkinScan",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "AI SkinScan",
+  "orientation": "portrait",
+  "scope": "/",
   "start_url": "/",
-  "theme_color": "#418482",
+  "id": "/",
+  "description": "AI skin disease detection and analysis system",
   "icons": [
     {
-      "src": "https://ai-skin-disease-detection-system-ap.vercel.app/favicon.svg",
+      "src": "/favicon.svg",
+      "sizes": "512x512",
       "type": "image/svg+xml",
-      "isSquare": false,
-      "isPng": false,
-      "isWebp": false,
-      "isJpg": false,
-      "width": 0,
-      "is512x512": false,
-      "is256x256": false,
-      "is192x192": false
+      "purpose": "any maskable"
     }
-  ],
-  "id": "/",
-  "description": "AI skin disease detection and analysis system"
+  ]
 }
