@@ -427,6 +427,36 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
   // Calibrated Clinical Profiles
   const profiles = [
     {
+      id: 'healthy_skin',
+      hamCode: 'NORM',
+      name: 'Healthy & Normal Skin (No Disease Lesions Detected)',
+      icd10: 'Z00.00',
+      snomedCT: '302154003',
+      calculateScores: () => {
+        let modelA = 20, modelB = 20, modelC = 20;
+        if (erythemaRatio < 0.05 && pigmentationRatio < 0.025 && depigmentationRatio < 0.025) modelA += 45;
+        if (pusRatio < 0.008 && scaleRatio < 0.015 && lesionDiameterRatio < 0.12) modelB += 35;
+        if (!hasItching && !hasPain && !hasBurning && !hasBleeding && !hasScaling) modelC += 25;
+        return { modelA: Math.min(98, modelA), modelB: Math.min(98, modelB), modelC: Math.min(98, modelC) };
+      },
+      severity: 'Normal', severityScore: 1,
+      explanation: 'Analysis confirms uniform skin texture and healthy pigmentation without active erythema, rash, scaling, or suspicious melanocytic lesions.',
+      visualObservations: {
+        color: 'Even, healthy skin tone pigmentation', texture: 'Smooth, intact epidermal surface',
+        borders: 'No demarcated lesion borders detected', inflammation: 'None / Normal',
+        lesionType: 'Healthy Intact Skin Surface', skinToneCalibration: `${fitzpatrick.fitzpatrickType} (${fitzpatrick.fitzpatrickName})`
+      },
+      triage: { level: 'Routine / Normal Skin', score: 1, redFlags: [], escalationReason: 'No clinical lesion or erythema detected. Normal skin integrity preserved.' },
+      medicationSafety: {
+        warnings: [],
+        safeGeneralAdvice: ['Maintain good skin hygiene and apply broad-spectrum sunscreen when outdoors.'],
+        contraindications: []
+      },
+      recommendations: ['Maintain standard daily skin moisturizing.', 'Use SPF 30+ sunscreen outdoors.', 'Perform routine self-checks monthly.'],
+      referenceDescriptor: 'Normal, healthy skin surface free of erythematous rash or pigmented lesions.'
+    },
+
+    {
       id: 'rosacea',
       hamCode: 'VASC',
       name: 'Rosacea (Erythematotelangiectatic / Papulopustular)',

@@ -78,8 +78,8 @@ export default function SkinRednessChecker() {
         redMarkPixelCount,
         percentage: (redRatio * 100).toFixed(1),
         message: isRedDetected
-          ? '🔴 Red mark / redness detected on skin'
-          : '✅ Normal skin detected (no red mark found)',
+          ? '🔴 Red Mark / Erythema Detected on Skin'
+          : '✅ Healthy & Normal Skin Detected (No Red Mark or Rash Found)',
       });
       setIsAnalyzing(false);
     }, 400);
