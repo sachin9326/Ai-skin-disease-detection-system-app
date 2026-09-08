@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, ShieldCheck, AlertTriangle, Layers, BarChart3, TrendingUp, RefreshCw, Cpu, Database, Server } from 'lucide-react';
+import ValidationDashboard from './ValidationDashboard';
 
 export default function AdminDashboard() {
   const [metrics, setMetrics] = useState(null);
@@ -88,6 +89,9 @@ export default function AdminDashboard() {
         </div>
 
       </div>
+
+      {/* Per-Class Clinical Validation Suite */}
+      <ValidationDashboard />
 
       {/* Model Versioning & Traceability Info */}
       <div className="glass-card p-5 rounded-3xl border border-slate-800 space-y-4">

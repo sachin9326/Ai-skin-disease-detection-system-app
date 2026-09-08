@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Camera, Upload, RefreshCw, FlipHorizontal, Sun, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Camera, Upload, RefreshCw, FlipHorizontal, AlertCircle, Sparkles } from 'lucide-react';
 
 export default function CameraCapture({ onImageSelected }) {
   const videoRef = useRef(null);
@@ -195,20 +195,24 @@ export default function CameraCapture({ onImageSelected }) {
   const nativeCameraInputRef = useRef(null);
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col items-center gap-6 p-4">
+    <div className="w-full max-w-2xl mx-auto flex flex-col items-center gap-6 p-2 sm:p-4">
       
       {/* Title & Instructions */}
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-100 to-cyan-200 bg-clip-text text-transparent">
-          Skin Capture & Photo Analysis
+      <div className="text-center space-y-1.5">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold shadow-xs">
+          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <span>AI Clinical Dermatoscopy Vision</span>
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-100">
+          Skin Lesion Screening
         </h2>
-        <p className="text-sm text-slate-400 max-w-md">
-          Take a live photo with camera, upload a gallery image, or try an instant demo test.
+        <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+          Capture high-resolution dermatoscopy image or upload a photo to analyze ABCDE features and risk metrics.
         </p>
       </div>
 
       {/* Main Viewport Container */}
-      <div className="w-full relative rounded-3xl overflow-hidden glass-card border border-slate-700/80 shadow-2xl bg-slate-900/90 aspect-[4/3] flex items-center justify-center">
+      <div className="w-full relative rounded-3xl overflow-hidden glass-card-premium border border-slate-800 shadow-2xl bg-slate-900/90 aspect-[4/3] flex items-center justify-center">
         
         {isCameraActive ? (
           <>
@@ -226,14 +230,14 @@ export default function CameraCapture({ onImageSelected }) {
               {/* Outer dimmed mask */}
               <div className="w-64 h-64 sm:w-72 sm:h-72 rounded-3xl border-2 border-dashed border-cyan-400/80 shadow-[0_0_30px_rgba(6,182,212,0.3)] relative flex items-center justify-center animate-pulse-ring">
                 {/* Corner reticles */}
-                <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-cyan-300"></div>
-                <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-cyan-300"></div>
-                <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-cyan-300"></div>
-                <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-cyan-300"></div>
+                <div className="absolute top-2 left-2 w-5 h-5 border-t-3 border-l-3 border-cyan-400 rounded-tl-sm"></div>
+                <div className="absolute top-2 right-2 w-5 h-5 border-t-3 border-r-3 border-cyan-400 rounded-tr-sm"></div>
+                <div className="absolute bottom-2 left-2 w-5 h-5 border-b-3 border-l-3 border-cyan-400 rounded-bl-sm"></div>
+                <div className="absolute bottom-2 right-2 w-5 h-5 border-b-3 border-r-3 border-cyan-400 rounded-br-sm"></div>
 
-                <div className="text-center bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-cyan-500/30 text-cyan-300 text-xs font-medium flex items-center gap-1.5 shadow-md">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Center lesion here</span>
+                <div className="text-center bg-slate-950/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-cyan-500/40 text-cyan-300 text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Center lesion in reticle</span>
                 </div>
               </div>
             </div>
@@ -242,32 +246,32 @@ export default function CameraCapture({ onImageSelected }) {
             <div className="absolute bottom-4 left-0 right-0 px-6 flex items-center justify-between pointer-events-auto">
               <button
                 onClick={flipCamera}
-                className="p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 backdrop-blur-md transition-transform active:scale-95 shadow-lg"
+                className="p-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-800 backdrop-blur-md transition-all active:scale-95 shadow-lg cursor-pointer"
                 title="Switch Camera"
                 aria-label="Flip Camera"
               >
-                <FlipHorizontal className="w-5 h-5" />
+                <FlipHorizontal className="w-5 h-5 text-cyan-400" />
               </button>
 
               {/* Main Shutter Button */}
               <button
                 onClick={handleCapture}
                 disabled={isCapturing}
-                className="group relative p-1 rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 p-1 shadow-[0_0_25px_rgba(6,182,212,0.5)] active:scale-95 transition-all"
+                className="group relative p-1.5 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 shadow-xl shadow-cyan-500/30 active:scale-95 transition-all cursor-pointer"
                 title="Take Photo"
               >
-                <div className="w-16 h-16 rounded-full bg-slate-950 flex items-center justify-center border-2 border-white/80 group-hover:bg-slate-900 transition-colors">
-                  <div className="w-12 h-12 rounded-full bg-cyan-400 group-hover:scale-90 transition-transform"></div>
+                <div className="w-16 h-16 rounded-full bg-slate-950 flex items-center justify-center border-2 border-cyan-400 group-hover:bg-slate-900 transition-colors">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 group-hover:scale-90 transition-transform"></div>
                 </div>
               </button>
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 backdrop-blur-md transition-transform active:scale-95 shadow-lg"
+                className="p-3.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-800 backdrop-blur-md transition-all active:scale-95 shadow-lg cursor-pointer"
                 title="Upload Photo"
                 aria-label="Upload from gallery"
               >
-                <Upload className="w-5 h-5" />
+                <Upload className="w-5 h-5 text-cyan-400" />
               </button>
             </div>
           </>
@@ -278,21 +282,21 @@ export default function CameraCapture({ onImageSelected }) {
             onDragOver={handleDrag}
             onDragLeave={handleDrag}
             onDrop={handleDrop}
-            className={`w-full h-full flex flex-col items-center justify-center p-6 text-center transition-colors cursor-pointer ${
-              dragActive ? 'bg-cyan-950/40 border-2 border-dashed border-cyan-400' : 'bg-slate-900/60'
+            className={`w-full h-full flex flex-col items-center justify-center p-6 text-center transition-all cursor-pointer ${
+              dragActive ? 'bg-cyan-500/10 border-2 border-dashed border-cyan-400' : 'bg-slate-900/40 hover:bg-slate-900/70'
             }`}
             onClick={() => nativeCameraInputRef.current?.click()}
           >
-            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-3 shadow-inner">
-              <Camera className="w-8 h-8" />
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-teal-500/20 to-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-4 shadow-xl shadow-cyan-500/10 animate-ambient-glow">
+              <Camera className="w-10 h-10" />
             </div>
 
-            <h3 className="text-lg font-bold text-slate-100 mb-1">
+            <h3 className="text-xl font-extrabold text-slate-100 mb-1">
               Take Photo or Upload Image
             </h3>
 
-            <p className="text-xs text-slate-400 mb-5 max-w-xs">
-              Click below to take a photo directly, upload from your gallery, or test a demo.
+            <p className="text-xs text-slate-400 mb-6 max-w-xs leading-relaxed">
+              Click below to capture with camera or drag and drop a clear photo from your gallery.
             </p>
 
             {/* Action Buttons Grid */}
@@ -308,7 +312,7 @@ export default function CameraCapture({ onImageSelected }) {
                     startCamera();
                   }
                 }}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all shadow-lg shadow-cyan-500/20 active:scale-95"
+                className="px-5 py-3 rounded-2xl bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 text-xs sm:text-sm font-black flex items-center gap-2 transition-all shadow-lg shadow-cyan-500/25 active:scale-95 cursor-pointer"
               >
                 <Camera className="w-4 h-4 stroke-[2.5]" />
                 <span>Take Photo</span>
@@ -321,20 +325,20 @@ export default function CameraCapture({ onImageSelected }) {
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 flex items-center gap-2 transition-all shadow-md active:scale-95"
+                className="px-4 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs sm:text-sm font-bold border border-slate-800 flex items-center gap-2 transition-all shadow-xs active:scale-95 cursor-pointer"
               >
                 <Upload className="w-4 h-4 text-cyan-400" />
-                <span>Upload from Gallery</span>
+                <span>Upload Gallery</span>
               </button>
 
-              {/* Instant Demo Test Button */}
+              {/* Sample Photo Demo Button */}
               <button
                 type="button"
                 onClick={handleUseSamplePhoto}
-                className="px-4 py-2.5 rounded-xl bg-teal-950/80 hover:bg-teal-900 text-teal-300 hover:text-teal-200 text-xs sm:text-sm font-bold border border-teal-700/60 flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+                className="px-4 py-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30 flex items-center gap-1.5 transition-all shadow-xs active:scale-95 cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-teal-400" />
-                <span>Try Demo Photo</span>
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span>Sample Demo</span>
               </button>
             </div>
           </div>
@@ -360,19 +364,9 @@ export default function CameraCapture({ onImageSelected }) {
         />
       </div>
 
-      {/* Guidelines Card */}
-      <div className="w-full glass-card p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-cyan-400 font-semibold">
-          <Sun className="w-4 h-4 shrink-0" />
-          <span>Tips for Best AI Accuracy:</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-4 text-slate-400">
-          <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400" /> Good lighting</span>
-          <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400" /> Sharp focus</span>
-          <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-teal-400" /> Clear view of lesion</span>
-        </div>
-      </div>
-
     </div>
+
+
   );
 }
+

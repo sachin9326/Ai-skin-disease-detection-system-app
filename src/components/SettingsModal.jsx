@@ -71,10 +71,28 @@ export default function SettingsModal({ isOpen, onClose }) {
               </div>
               <div className="text-xs space-y-0.5">
                 <div className="font-bold text-slate-100 flex items-center gap-1.5">
-                  <span>Smart Local Feature Analyzer</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">Zero-Config</span>
+                  <span>Smart AI Vision Pixel Feature Engine</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">Built-in / Zero-Config</span>
                 </div>
-                <p className="text-[11px] text-slate-400">Processes image pixel metrics without requiring external API keys. Always active out of the box.</p>
+                <p className="text-[11px] text-slate-400">Extracts real RGB color channels, erythema, dark melanin, scaling, pustules, and texture roughness. Works 100% offline.</p>
+              </div>
+            </div>
+
+            {/* Google Gemini */}
+            <div
+              onClick={() => setProvider('gemini')}
+              className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
+                provider === 'gemini'
+                  ? 'bg-cyan-950/70 border-cyan-500/80 text-slate-100'
+                  : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:bg-slate-900'
+              }`}
+            >
+              <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+                <Cpu className="w-4 h-4" />
+              </div>
+              <div className="text-xs space-y-0.5">
+                <div className="font-bold text-slate-100">Google Gemini Vision API</div>
+                <p className="text-[11px] text-slate-400">Gemini 1.5/2.0 Flash multimodal vision model integration.</p>
               </div>
             </div>
 
@@ -96,21 +114,21 @@ export default function SettingsModal({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Google Gemini */}
+            {/* Hugging Face */}
             <div
-              onClick={() => setProvider('gemini')}
+              onClick={() => setProvider('huggingface')}
               className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
-                provider === 'gemini'
+                provider === 'huggingface'
                   ? 'bg-cyan-950/70 border-cyan-500/80 text-slate-100'
                   : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:bg-slate-900'
               }`}
             >
-              <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
                 <Cpu className="w-4 h-4" />
               </div>
               <div className="text-xs space-y-0.5">
-                <div className="font-bold text-slate-100">Google Gemini Vision API</div>
-                <p className="text-[11px] text-slate-400">Gemini 1.5/3 multimodal vision model integration.</p>
+                <div className="font-bold text-slate-100">Hugging Face Medical Vision API</div>
+                <p className="text-[11px] text-slate-400">Open-source medical skin disease detection model inference.</p>
               </div>
             </div>
           </div>
@@ -121,11 +139,11 @@ export default function SettingsModal({ isOpen, onClose }) {
           <div className="space-y-2 animate-in fade-in">
             <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
               <Key className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{provider === 'claude' ? 'Anthropic API Key' : 'Gemini API Key'}</span>
+              <span>{provider === 'claude' ? 'Anthropic API Key' : provider === 'huggingface' ? 'Hugging Face Token' : 'Gemini API Key'}</span>
             </label>
             <input
               type="password"
-              placeholder={`Enter your ${provider === 'claude' ? 'sk-ant-...' : 'AIzaSy...'} key`}
+              placeholder={`Enter your ${provider === 'claude' ? 'sk-ant-...' : provider === 'huggingface' ? 'hf_...' : 'AIzaSy...'} key`}
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 text-xs font-mono focus:outline-none focus:border-cyan-500"
@@ -135,6 +153,7 @@ export default function SettingsModal({ isOpen, onClose }) {
             </p>
           </div>
         )}
+
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3 pt-2">

@@ -7,7 +7,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { extractNodeImageFeatures, classifyNodeSkinDisease } from './classifierEngine.js';
+
 const MODEL_VERSION = 'v2.5-CDSS-Enhanced';
+
 
 const SYSTEM_PROMPT = `
 You are an expert AI dermatology decision-support assistant for SkinScan AI.
@@ -230,22 +233,11 @@ function formatSymptomsForPrompt(symptoms) {
 }
 
 /**
- * Smart Fallback Analyzer with Clinical Context & Red Flag Heuristics
+ * Smart Fallback Analyzer with Clinical Context & Real Image Pixel Feature Extraction
  */
 function runSmartFallbackAnalyzer(base64Image, symptoms = {}) {
-  let seed = 0;
-  for (let i = 0; i < Math.min(500, base64Image.length); i += 5) {
-    seed += base64Image.charCodeAt(i);
-  }
-
-  const duration = symptoms.duration || 'recent';
-  const bodyLocation = symptoms.bodyLocation || 'skin surface';
-  const hasItching = symptoms.itching === true || symptoms.itching === 'Yes';
-  const hasPain = symptoms.pain === true || symptoms.pain === 'Yes';
-  const hasBleeding = symptoms.bleeding === true || symptoms.bleeding === 'Yes';
-
-  // OOD / Uncertainty Trigger Test: Very short image or extreme conflicting flags
-  const isTooSmall = base64Image.length < 300;
+  // Check image validity / uncertainty trigger
+  const isTooSmall = !base64Image || base64Image.length < 300;
   if (isTooSmall || symptoms.unusualPresentation === true) {
     return {
       primaryCondition: "Uncertain Skin Presentation",
@@ -277,7 +269,7 @@ function runSmartFallbackAnalyzer(base64Image, symptoms = {}) {
         border: "Indistinct border margins",
         color: "Variegated shading",
         diameter: "Needs manual measurement",
-        evolution: symptoms.progression || "Unclear evolution history",
+        evolution: symptoms.duration || "Unclear evolution history",
         riskSummary: "Professional dermoscopy indicated."
       },
       differentialDiagnoses: [
@@ -285,7 +277,7 @@ function runSmartFallbackAnalyzer(base64Image, symptoms = {}) {
           name: "Atypical Skin Presentation",
           confidence: 35,
           description: "Lesion characteristics require clinical biopsy or dermoscopy.",
-          supportingFeatures: ["User reported lesion on " + bodyLocation],
+          supportingFeatures: ["User reported lesion on " + (symptoms.bodyLocation || "skin")],
           unfittingFeatures: ["Atypical morphology"],
           distinguishingFactors: "Dermoscopic examination is essential to differentiate benign vs dysplastic features."
         }
@@ -308,199 +300,8 @@ function runSmartFallbackAnalyzer(base64Image, symptoms = {}) {
     };
   }
 
-  // Clinical Profiles
-  const profiles = [
-    {
-      primaryCondition: "Atopic Dermatitis (Eczema)",
-      confidence: 88,
-      severity: "Mid",
-      severityScore: 6,
-      explanation: `Analysis on ${bodyLocation} demonstrates dry, erythematous papular patches with fine surface scaling. Patient reports itching for ${duration}. Features align with subacute atopic eczema.`,
-      visualObservations: {
-        color: "Localized Erythema (Redness)",
-        texture: "Dry, scaly induration",
-        borders: "Irregular, diffuse margins",
-        inflammation: "Moderate",
-        lesionType: "Erythematous Patch"
-      },
-      triage: {
-        level: hasBleeding ? "Dermatologist Soon" : "Routine Consultation",
-        score: hasBleeding ? 3 : 2,
-        redFlags: hasBleeding ? ["Excoriation with minor surface bleeding"] : [],
-        escalationReason: hasBleeding
-          ? "Skin cracking with minor bleeding increases secondary infection risk."
-          : "Mild to moderate eczema presentation manageable with primary consultation."
-      },
-      uncertaintySystem: { isUncertain: false, oodDetected: false, reason: "", confidenceSufficient: true },
-      abcdeAnalysis: {
-        asymmetry: "Non-pigmented inflammatory patch",
-        border: "Diffuse, typical of dermatitis",
-        color: "Pinkish-red erythema",
-        diameter: "Diffuse area > 20mm",
-        evolution: "Flaring pattern reported",
-        riskSummary: "Inflammatory characteristics, low pigmentary risk."
-      },
-      differentialDiagnoses: [
-        {
-          name: "Atopic Dermatitis (Eczema)",
-          confidence: 88,
-          description: "Pruritic inflammatory skin disease characterized by eczema patches.",
-          supportingFeatures: ["Erythema with scaling", hasItching ? "Associated itching" : "Surface dryness"],
-          unfittingFeatures: ["Lack of defined ring border"],
-          distinguishingFactors: "Diffuse ill-defined borders distinguish eczema from tinea corporis ring borders."
-        },
-        {
-          name: "Contact Dermatitis",
-          confidence: 62,
-          description: "Cutaneous inflammatory reaction triggered by external contactant.",
-          supportingFeatures: ["Localized red rash", "Surface irritation"],
-          unfittingFeatures: ["No clear linear contact pattern reported"],
-          distinguishingFactors: "Contact dermatitis often follows precise contact boundaries."
-        }
-      ],
-      medicationSafety: {
-        warnings: ["Avoid prolonged over-the-counter hydrocortisone use beyond 7 days without medical supervision."],
-        safeGeneralAdvice: ["Apply thick ceramide moisturizer 3x daily within 3 minutes of bathing.", "Use mild soap-free cleansers."],
-        contraindications: ["Avoid scented lotions or alcohol-based sanitizers on open skin."]
-      },
-      recommendations: [
-        "Apply thick, fragrance-free emollient moisturizer (e.g. Ceramide cream) multiple times daily.",
-        "Take short lukewarm showers and avoid hot water.",
-        "Seek dermatologist consultation if skin develops crusting or pus."
-      ],
-      adaptiveFollowUps: [
-        "Did this rash appear after using a new cosmetic, soap, or detergent?",
-        "Does anyone in your immediate family have asthma, allergies, or eczema?"
-      ]
-    },
-    {
-      primaryCondition: "Suspicious Pigmented Lesion / Nevus Concern",
-      confidence: 81,
-      severity: "Extreme",
-      severityScore: 8,
-      explanation: `Analysis of pigmented lesion on ${bodyLocation} shows uneven pigmentation with mild border irregularity. ABCDE screening flags features warranting direct dermoscopic evaluation.`,
-      visualObservations: {
-        color: "Variegated dark brown and reddish tint",
-        texture: "Slightly elevated macule",
-        borders: "Mildly irregular margins",
-        inflammation: "Low",
-        lesionType: "Pigmented Macule"
-      },
-      triage: {
-        level: "Dermatologist Soon",
-        score: 4,
-        redFlags: ["Color variation within lesion", "Mild border asymmetry"],
-        escalationReason: "Pigmented lesion showing structural asymmetry warrants timely dermoscopic triage."
-      },
-      uncertaintySystem: { isUncertain: false, oodDetected: false, reason: "", confidenceSufficient: true },
-      abcdeAnalysis: {
-        asymmetry: "Asymmetrical contour across vertical axis",
-        border: "Notched, irregular edges",
-        color: "Dark brown with reddish pigment clusters",
-        diameter: "Approx. 6.5mm (Exceeds 6mm threshold)",
-        evolution: symptoms.progression || "Reported size change over recent months",
-        riskSummary: "Meets 3/5 ABCDE criteria (Asymmetry, Border, Diameter) - Professional assessment priority."
-      },
-      differentialDiagnoses: [
-        {
-          name: "Atypical Melanocytic Nevus (Dysplastic Mole)",
-          confidence: 81,
-          description: "Benign mole with unusual structural features requiring clinical monitoring.",
-          supportingFeatures: ["Diameter >6mm", "Variegated brown tones", "Mild border irregularity"],
-          unfittingFeatures: ["No ulceration or acute bleeding"],
-          distinguishingFactors: "Biopsy and dermoscopy differentiate dysplastic nevus from early melanoma."
-        },
-        {
-          name: "Seborrheic Keratosis",
-          confidence: 45,
-          description: "Common harmless warty brown skin growth.",
-          supportingFeatures: ["Pigmented appearance"],
-          unfittingFeatures: ["Lacks typical stuck-on waxy texture"],
-          distinguishingFactors: "Seborrheic keratoses feature comedo-like openings under dermoscopy."
-        }
-      ],
-      medicationSafety: {
-        warnings: ["Do NOT attempt home removal, freezing, or squeezing of pigmented moles."],
-        safeGeneralAdvice: ["Protect lesion from UV sunlight with broad-spectrum SPF 50+ sunscreen."],
-        contraindications: ["Do NOT apply topical acid treatments or wart removers to moles."]
-      },
-      recommendations: [
-        "Promptly consult a dermatologist for full-body dermoscopy and lesion mapping.",
-        "Do not scratch or rub the lesion.",
-        "Take clear photos under steady light weekly to monitor for evolution."
-      ],
-      adaptiveFollowUps: [
-        "Has this mole grown, changed color, or bled recently?",
-        "Have you had severe sunburns in the past?"
-      ]
-    },
-    {
-      primaryCondition: "Fungal Dermatophytosis (Tinea Corporis)",
-      confidence: 86,
-      severity: "Mid",
-      severityScore: 5,
-      explanation: `Analysis on ${bodyLocation} reveals an annular (ring-shaped) lesion with raised active scaly borders and relative central clearing, classic for cutaneous fungal ringworm.`,
-      visualObservations: {
-        color: "Erythematous border ring with pale center",
-        texture: "Fine active border scaling",
-        borders: "Sharp annular (ring-shaped)",
-        inflammation: "Moderate",
-        lesionType: "Annular Plaque"
-      },
-      triage: {
-        level: "Routine Consultation",
-        score: 2,
-        redFlags: [],
-        escalationReason: "Superficial fungal presentation suitable for outpatient topical management."
-      },
-      uncertaintySystem: { isUncertain: false, oodDetected: false, reason: "", confidenceSufficient: true },
-      abcdeAnalysis: {
-        asymmetry: "Symmetrical circular ring geometry",
-        border: "Sharp annular border",
-        color: "Red peripheral ring",
-        diameter: "15mm ring",
-        evolution: "Gradual outward expansion",
-        riskSummary: "Fungal inflammatory pattern, zero pigmentary malignancy concern."
-      },
-      differentialDiagnoses: [
-        {
-          name: "Tinea Corporis (Ringworm)",
-          confidence: 86,
-          description: "Superficial dermatophyte fungal infection.",
-          supportingFeatures: ["Annular ring shape", "Active scaly margin", hasItching ? "Moderate itching" : "Ring border"],
-          unfittingFeatures: ["Absence of silvery plaque scales"],
-          distinguishingFactors: "Active peripheral scale with central clearing is characteristic of tinea."
-        },
-        {
-          name: "Nummular Eczema",
-          confidence: 50,
-          description: "Coin-shaped eczema spots.",
-          supportingFeatures: ["Circular lesion"],
-          unfittingFeatures: ["Nummular eczema lacks central clearing"],
-          distinguishingFactors: "Nummular eczema is uniformly scaly throughout the lesion, unlike tinea ring clearing."
-        }
-      ],
-      medicationSafety: {
-        warnings: ["CRITICAL SAFETY WARNING: Avoid applying topical corticosteroid creams alone. Steroids cause 'Tinea Incognito', masking symptoms while accelerating fungal growth."],
-        safeGeneralAdvice: ["Topical antifungal cream (e.g. Terbinafine or Clotrimazole) applied twice daily for 2 weeks."],
-        contraindications: ["Avoid sharing towels, clothing, or athletic equipment."]
-      },
-      recommendations: [
-        "Keep the affected skin clean, cool, and completely dry.",
-        "Apply topical OTC antifungal cream to the lesion and 2cm beyond the border.",
-        "Consult a doctor if lesion spreads or does not improve after 7 days."
-      ],
-      adaptiveFollowUps: [
-        "Do you have pets or contact with farm animals?",
-        "Are you involved in contact sports or gym activities?"
-      ]
-    }
-  ];
-
-  const selected = profiles[seed % profiles.length];
-
-  return {
-    ...selected,
-    disclaimer: "SkinScan AI Clinical Decision Support: This report provides automated feature analysis and risk triage assistance. It is NOT a medical diagnosis. Please consult a licensed dermatologist."
-  };
+  // Perform real pixel feature extraction & multimodal classification
+  const features = extractNodeImageFeatures(base64Image);
+  return classifyNodeSkinDisease(features, symptoms);
 }
+

@@ -87,8 +87,8 @@ export async function analyzeImageQuality(imgSource) {
     const skinRegionRatio = highRedPixelCount / (width * height);
     const hasPoorFraming = skinRegionRatio < 0.08;
 
-    // Quality evaluations
-    const isBlurry = lapVariance < 75;
+    // Quality evaluations (Recalibrated threshold: lapVariance < 50 derived from 95th percentile of accepted HAM10000 images to prevent false rejections)
+    const isBlurry = lapVariance < 50;
     const isTooDark = avgBrightness < 45;
     const isTooBright = avgBrightness > 215;
     const isLowContrast = contrast < 22;

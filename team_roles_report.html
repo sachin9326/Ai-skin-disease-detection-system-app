@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkinScan AI — Team Role Breakdown | NIT Nagpur Group-8</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2d7d46;
+    --accent2: #e8a020;
+    --red: #c0392b;
+    --light-bg: #f4f6f9;
+    --card-bg: #ffffff;
+    --border: #d1d9e6;
+    --text: #1a1a2e;
+    --muted: #5a6a7a;
+    --code-bg: #1e2a3a;
+    --code-text: #7dd3fc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f0f4f8;
+    color: var(--text);
+    font-size: 11pt;
+    line-height: 1.65;
+  }
+
+  /* ── PAGE WRAPPER ── */
+  .page {
+    max-width: 210mm;
+    margin: 0 auto;
+    background: white;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    background: linear-gradient(135deg, #0f2440 0%, #1a3a5c 50%, #0d5c3a 100%);
+    color: white;
+    padding: 60px 50px;
+    min-height: 297mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 350px; height: 350px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .cover-badge {
+    display: inline-block;
+    background: var(--accent2);
+    color: #1a1a00;
+    font-weight: 700;
+    font-size: 10pt;
+    padding: 5px 16px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .cover h1 {
+    font-size: 38pt;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .cover h1 span { color: #5ce87a; }
+  .cover .subtitle {
+    font-size: 14pt;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+  .cover-divider {
+    width: 80px; height: 4px;
+    background: var(--accent2);
+    border-radius: 2px;
+    margin-bottom: 40px;
+  }
+  .cover-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cover-meta-item { background: rgba(255,255,255,0.08); padding: 16px 20px; border-radius: 10px; border-left: 3px solid var(--accent2); }
+  .cover-meta-item .label { font-size: 8pt; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+  .cover-meta-item .value { font-size: 11pt; font-weight: 600; }
+  .cover-footer { position: absolute; bottom: 40px; left: 50px; right: 50px; display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.4); font-size: 9pt; }
+  .version-tag { background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; }
+
+  /* ── SECTION PAGES ── */
+  .section {
+    padding: 40px 50px;
+    page-break-before: always;
+  }
+  .section:first-of-type { page-break-before: auto; }
+
+  /* ── ROLE HEADER ── */
+  .role-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: linear-gradient(135deg, var(--primary), #0d5c3a);
+    color: white;
+    padding: 28px 32px;
+    border-radius: 14px;
+    margin-bottom: 30px;
+  }
+  .role-number {
+    width: 56px; height: 56px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22pt; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .role-info h2 { font-size: 20pt; font-weight: 700; margin-bottom: 4px; }
+  .role-info .role-title { font-size: 11pt; color: rgba(255,255,255,0.75); font-weight: 400; }
+  .role-badge {
+    margin-left: auto;
+    background: var(--accent2);
+    color: #1a1a00;
+    font-weight: 700;
+    font-size: 9pt;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── SECTION TITLE ── */
+  .sec-title {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 28px 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ── TABLES ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 20px 0;
+    font-size: 10pt;
+  }
+  th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9.5pt;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f7f9fc; }
+  tr:hover td { background: #eef3f9; }
+  td strong { color: var(--primary); }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: var(--code-bg);
+    color: #a5d6a7;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    line-height: 1.7;
+    margin: 12px 0 18px 0;
+    overflow: hidden;
+    border-left: 4px solid #2d7d46;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #e8f0fe;
+    color: #1a3a5c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9pt;
+  }
+
+  /* ── INFO CARDS ── */
+  .card {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 14px 0;
+  }
+  .card.warning {
+    background: #fff8e1;
+    border-color: #f9a825;
+    border-left: 4px solid #f9a825;
+  }
+  .card.danger {
+    background: #fff3f3;
+    border-color: var(--red);
+    border-left: 4px solid var(--red);
+  }
+  .card.success {
+    background: #f0fdf4;
+    border-color: var(--accent);
+    border-left: 4px solid var(--accent);
+  }
+  .card.info {
+    background: #eff6ff;
+    border-color: #2563eb;
+    border-left: 4px solid #2563eb;
+  }
+  .card-title { font-weight: 700; margin-bottom: 6px; font-size: 10.5pt; }
+  .card ul { margin-left: 18px; margin-top: 6px; }
+  .card li { margin-bottom: 4px; }
+
+  /* ── SPEECH BOX ── */
+  .speech-box {
+    background: linear-gradient(135deg, #0f2440, #1a3a5c);
+    color: white;
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .speech-box::before {
+    content: '"';
+    font-size: 60pt;
+    color: rgba(255,255,255,0.1);
+    position: absolute;
+    top: 5px; left: 15px;
+    line-height: 1;
+  }
+  .speech-label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent2);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .speech-text {
+    font-style: italic;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.9);
+    font-size: 10.5pt;
+    padding-left: 10px;
+  }
+
+  /* ── FILES LIST ── */
+  .files-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin: 12px 0 18px 0;
+  }
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f4f6f9;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+  }
+  .file-item::before {
+    content: '📄';
+    font-size: 11pt;
+  }
+  .file-arrow {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 8.5pt;
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+  }
+
+  /* ── PILLS / BADGES ── */
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 8.5pt;
+    font-weight: 600;
+  }
+  .pill-green { background: #dcfce7; color: #166534; }
+  .pill-red { background: #fee2e2; color: #991b1b; }
+  .pill-blue { background: #dbeafe; color: #1e40af; }
+  .pill-orange { background: #fef3c7; color: #92400e; }
+
+  /* ── PAGE BREAK ── */
+  .page-break { page-break-before: always; }
+
+  /* ── SUMMARY TABLE (last section) ── */
+  .summary-section {
+    background: linear-gradient(135deg, #0f2440 0%, #0d5c3a 100%);
+    color: white;
+    padding: 40px 50px;
+    page-break-before: always;
+  }
+  .summary-section h2 { font-size: 22pt; font-weight: 800; margin-bottom: 8px; }
+  .summary-section .sub { color: rgba(255,255,255,0.65); margin-bottom: 28px; }
+  .summary-section table th { background: rgba(255,255,255,0.15); }
+  .summary-section table td { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); }
+  .summary-section table tr:nth-child(even) td { background: rgba(255,255,255,0.05); }
+
+  .qna-item { margin-bottom: 20px; }
+  .qna-q { font-weight: 700; color: var(--primary); margin-bottom: 6px; font-size: 10.5pt; }
+  .qna-q::before { content: 'Q: '; color: var(--accent2); }
+  .qna-a { background: #f4f6f9; padding: 12px 16px; border-radius: 8px; border-left: 3px solid var(--accent); font-size: 10pt; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .section { page-break-before: always; }
+    .cover { page-break-after: always; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    a { text-decoration: none; color: inherit; }
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ════════════════════════════════════════════ -->
+<!--                  COVER PAGE                  -->
+<!-- ════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">1st Progress Seminar Report</div>
+  <h1>SkinScan <span>AI</span><br>Team Roles &amp;<br>Technical Breakdown</h1>
+  <p class="subtitle">AI-Powered Skin Disease Detection System — CDSS v2.5</p>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="label">Institution</div>
+      <div class="value">Nagpur Institute of Technology</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Department</div>
+      <div class="value">Computer Science &amp; Engineering</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Group</div>
+      <div class="value">Group-8</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Date</div>
+      <div class="value">September 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Team Lead</div>
+      <div class="value">Sachin Kumar</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Total Members</div>
+      <div class="value">5 Members</div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <span>SkinScan AI CDSS — Confidential Academic Report</span>
+    <span class="version-tag">v2.5-CDSS-Enhanced</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--         PERSON 1 — AI/ML ENGINEER            -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="role-header">
+    <div class="role-number">1</div>
+    <div class="role-info">
+      <h2>AI / ML Engineer</h2>
+      <div class="role-title">AI Vision Integration &amp; Clinical Decision Engine</div>
+    </div>
+    <div class="role-badge">Sachin Kumar</div>
+  </div>
+
+  <div class="sec-title">What This Person Built</div>
+  <p>This person is responsible for the <strong>entire intelligence of the system</strong> — connecting the skin photo to a medical-grade AI response. They built and integrated two major AI models and designed the 3-model ensemble classifier that decides what disease the patient might have, along with ICD-10 and SNOMED-CT medical coding for all 7 diseases.</p>
+
+  <div class="sec-title">1. Multi-Provider Vision AI Service</div>
+  <p><strong>File:</strong> <code>server/services/visionService.js</code> — This file is the brain of the AI pipeline. It handles three operational modes:</p>
+
+  <table>
+    <tr><th>Mode</th><th>API / System</th><th>Trigger Condition</th></tr>
+    <tr><td><strong>Primary</strong></td><td>Anthropic Claude 3.5 Vision</td><td>When ANTHROPIC_API_KEY is set</td></tr>
+    <tr><td><strong>Secondary</strong></td><td>Google Gemini 1.5 Flash</td><td>If Claude fails or is unavailable</td></tr>
+    <tr><td><strong>Fallback</strong></td><td>Local Pixel Classifier</td><td>If both APIs fail — no crash</td></tr>
+  </table>
+
+  <pre>
+// Claude 3.5 API Call
+URL:     https://api.anthropic.com/v1/messages
+Model:   claude-3-5-sonnet-20241022
+Headers: x-api-key, anthropic-version: 2023-06-01
+Body:    base64 image + structured medical system prompt
+Tokens:  Max 1500 output tokens
+
+// Gemini 1.5 Flash API Call
+URL:     https://generativelanguage.googleapis.com/v1beta/
+         models/gemini-1.5-flash:generateContent?key={API_KEY}
+Format:  inline_data { mime_type: image/jpeg, data: base64 }
+Output:  response_mime_type: application/json</pre>
+
+  <div class="sec-title">2. Medical System Prompt Engineering</div>
+  <div class="card info">
+    <div class="card-title">The AI was given 7 strict clinical rules:</div>
+    <ul>
+      <li>Describe visible skin features objectively: color, texture, borders, inflammation</li>
+      <li>If image quality is poor → set <code>uncertaintySystem.isUncertain = true</code></li>
+      <li>Compute Triage Level into exactly one of 5 categories (Emergency → Monitor)</li>
+      <li>Evaluate ABCDE pigmented lesion risk if dark mole is suspected</li>
+      <li>Highlight medication safety warnings against steroid misuse</li>
+      <li>Provide Top 5 differential diagnoses with supporting + unfitting features</li>
+      <li>Output must be a <strong>valid JSON</strong> matching strict medical schema</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">3. Classifier Engine — 3-Model Ensemble</div>
+  <p><strong>File:</strong> <code>server/services/classifierEngine.js</code> — Reads raw base64 image bytes via <code>Buffer.from(base64, 'base64')</code> and samples up to <strong>20,000 pixel triplets (R, G, B)</strong>.</p>
+
+  <table>
+    <tr><th>Feature Extracted</th><th>Technical Formula</th></tr>
+    <tr><td><strong>Erythema Ratio</strong></td><td>Pixels where R &gt; G+20 AND R &gt; B+20 (redness)</td></tr>
+    <tr><td><strong>Pigmentation Ratio</strong></td><td>Dark pixels where luma &lt; 75</td></tr>
+    <tr><td><strong>Depigmentation Ratio</strong></td><td>White pixels: luma &gt; 185, R≈G≈B (vitiligo)</td></tr>
+    <tr><td><strong>Scale Ratio</strong></td><td>Bright red pixels with low R-G diff (psoriasis)</td></tr>
+    <tr><td><strong>Pus Ratio</strong></td><td>R&gt;135, G&gt;115, B&lt;100, (R-B)&gt;40 (acne pustules)</td></tr>
+    <tr><td><strong>Asymmetry Score</strong></td><td>(maxQuadrant - minQuadrant) / maxQuadrant</td></tr>
+    <tr><td><strong>Fitzpatrick Type</strong></td><td>Luminance-based: Type I (luma&gt;76) → Type VI (luma≤34)</td></tr>
+  </table>
+
+  <table>
+    <tr><th>Model</th><th>What It Analyzes</th><th>Weight</th></tr>
+    <tr><td><strong>Model A — Visual Feature</strong></td><td>Pixel ratios (erythema, pus, pigment)</td><td><span class="pill pill-blue">45%</span></td></tr>
+    <tr><td><strong>Model B — Saliency Texture</strong></td><td>Scale, blur, surface texture analysis</td><td><span class="pill pill-green">30%</span></td></tr>
+    <tr><td><strong>Model C — Multimodal Context</strong></td><td>Symptoms, body location, patient history</td><td><span class="pill pill-orange">25%</span></td></tr>
+  </table>
+
+  <pre>Final Ensemble Score = (0.45 × ModelA) + (0.30 × ModelB) + (0.25 × ModelC)
+Confidence Range: 50 → 95%  |  Below 55% → "Inconclusive / Low Confidence"</pre>
+
+  <table>
+    <tr><th>Disease</th><th>ICD-10</th><th>SNOMED-CT</th><th>Key Detection Signal</th></tr>
+    <tr><td>Rosacea</td><td>L71.9</td><td>398909004</td><td>High erythema + face location + burning</td></tr>
+    <tr><td>Acne Vulgaris</td><td>L70.0</td><td>24079001</td><td>High pus ratio + face/chest/back</td></tr>
+    <tr><td>Atopic Dermatitis</td><td>L20.9</td><td>24079001</td><td>Erythema + scaling + itching</td></tr>
+    <tr><td>Psoriasis Vulgaris</td><td>L40.0</td><td>9014002</td><td>High scale ratio + scalp/limbs</td></tr>
+    <tr><td>Tinea Corporis</td><td>B35.4</td><td>111838006</td><td>Annular ring score + scaling + itch</td></tr>
+    <tr><td>Pigmented Nevus</td><td>D22.9</td><td>400096001</td><td>High pigmentation + asymmetry → ABCDE flag</td></tr>
+    <tr><td>Vitiligo</td><td>L80</td><td>56727007</td><td>High depigmentation + no pain/itch</td></tr>
+  </table>
+
+  <div class="sec-title">Files Owned</div>
+  <div class="files-grid">
+    <div class="file-item">server/services/visionService.js <span class="file-arrow">Claude + Gemini API calls + smart fallback</span></div>
+    <div class="file-item">server/services/classifierEngine.js <span class="file-arrow">Pixel feature extraction + 3-model ensemble scoring</span></div>
+  </div>
+
+  <div class="sec-title">Presentation Speech</div>
+  <div class="speech-box">
+    <div class="speech-label">🎤 Say This During Presentation</div>
+    <p class="speech-text">"I am the AI/ML Engineer for SkinScan AI. My work is the core intelligence of this system. I integrated two production-grade AI Vision APIs — Anthropic Claude 3.5 Sonnet and Google Gemini 1.5 Flash — into a unified vision service. I engineered a detailed medical system prompt that instructs the AI to act as a Clinical Decision Support System — not just guess, but follow strict clinical rules including triage classification, ABCDE melanoma screening, and medication safety warnings. Additionally, I built a complete local fallback classifier called the Classifier Engine that uses pixel-level feature extraction — reading raw RGB bytes from the image buffer — and a 3-model ensemble scoring system to classify 7 skin diseases even without any external API. Every disease has ICD-10 and SNOMED-CT medical codes embedded. The system includes uncertainty detection, Fitzpatrick skin tone calibration, and always returns top 5 differential diagnoses."</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--        PERSON 2 — FRONTEND DEVELOPER         -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="role-header">
+    <div class="role-number">2</div>
+    <div class="role-info">
+      <h2>Frontend Developer</h2>
+      <div class="role-title">React UI, 16 Components, User Experience</div>
+    </div>
+    <div class="role-badge">[Team Member 2]</div>
+  </div>
+
+  <div class="sec-title">What This Person Built</div>
+  <p>This person built <strong>everything the user sees and interacts with</strong> — the entire React frontend application with 16 custom components covering camera capture, AI analysis display, voice input, symptom collection, history, dashboards, and more.</p>
+
+  <div class="sec-title">All 16 React Components</div>
+  <table>
+    <tr><th>#</th><th>Component File</th><th>Size</th><th>Purpose</th></tr>
+    <tr><td>1</td><td><code>AnalysisView.jsx</code></td><td>27 KB</td><td>Full AI scan report — confidence, triage, ABCDE, differentials, medication</td></tr>
+    <tr><td>2</td><td><code>AdaptiveQuestionnaire.jsx</code></td><td>19 KB</td><td>Smart symptom form — questions change dynamically based on patient answers</td></tr>
+    <tr><td>3</td><td><code>DoctorDashboard.jsx</code></td><td>14 KB</td><td>Doctor panel — patient queue, approve/override/escalate AI diagnosis</td></tr>
+    <tr><td>4</td><td><code>CameraCapture.jsx</code></td><td>14 KB</td><td>Live camera capture + file upload with real-time quality preview</td></tr>
+    <tr><td>5</td><td><code>VoiceInput.jsx</code></td><td>11 KB</td><td>Web Speech API — voice-to-text symptom entry</td></tr>
+    <tr><td>6</td><td><code>HistoryView.jsx</code></td><td>12 KB</td><td>Patient scan history with timeline, filter, and delete functions</td></tr>
+    <tr><td>7</td><td><code>Header.jsx</code></td><td>7 KB</td><td>Navigation bar with auth state and settings access</td></tr>
+    <tr><td>8</td><td><code>AdminDashboard.jsx</code></td><td>8 KB</td><td>Admin metrics panel — total scans, users, triage distribution</td></tr>
+    <tr><td>9</td><td><code>AuthModal.jsx</code></td><td>7 KB</td><td>Login and Register modal with form validation</td></tr>
+    <tr><td>10</td><td><code>SettingsModal.jsx</code></td><td>8 KB</td><td>API key management — Claude, Gemini, model selection</td></tr>
+    <tr><td>11</td><td><code>DermLocator.jsx</code></td><td>7 KB</td><td>Nearby dermatologist finder using geolocation</td></tr>
+    <tr><td>12</td><td><code>QualityCheck.jsx</code></td><td>7 KB</td><td>Image quality feedback — blur, brightness, contrast scores display</td></tr>
+    <tr><td>13</td><td><code>ImageComparer.jsx</code></td><td>6 KB</td><td>Side-by-side: original image vs AI saliency heatmap</td></tr>
+    <tr><td>14</td><td><code>LesionSegmentation.jsx</code></td><td>5 KB</td><td>Highlights and outlines detected lesion area on skin</td></tr>
+    <tr><td>15</td><td><code>Preprocessing.jsx</code></td><td>5 KB</td><td>Visualizes the 8-step preprocessing pipeline with live feedback</td></tr>
+    <tr><td>16</td><td><code>DisclaimerBanner.jsx</code></td><td>1 KB</td><td>Medical disclaimer shown on every analysis result</td></tr>
+  </table>
+
+  <div class="sec-title">Key Technical Features Built</div>
+
+  <div class="card success">
+    <div class="card-title">📷 Camera Capture System (CameraCapture.jsx)</div>
+    <ul>
+      <li>Live camera stream using <code>navigator.mediaDevices.getUserMedia()</code></li>
+      <li>Snapshot capture via HTML5 Canvas API</li>
+      <li>File upload with drag-and-drop support</li>
+      <li>Real-time image quality score shown before AI analysis begins</li>
+    </ul>
+  </div>
+
+  <div class="card info">
+    <div class="card-title">🎙️ Voice Input System (VoiceInput.jsx — 10KB)</div>
+    <ul>
+      <li>Uses <code>window.SpeechRecognition</code> / <code>webkitSpeechRecognition</code> Web API</li>
+      <li>Listens for symptom descriptions spoken by the patient</li>
+      <li>Converts speech-to-text and fills symptom form fields automatically</li>
+      <li>Visual microphone animation shown while recording</li>
+    </ul>
+  </div>
+
+  <div class="card warning">
+    <div class="card-title">📋 Analysis View — Most Complex Component (AnalysisView.jsx — 27KB)</div>
+    <ul>
+      <li>Animated confidence percentage ring with color-coded severity</li>
+      <li>Triage level badge: Emergency (red) → Monitor (green)</li>
+      <li>Full ABCDE analysis table for melanoma screening</li>
+      <li>Top 5 Differential Diagnoses in expandable detail cards</li>
+      <li>Medication Safety warnings with severity color-coding</li>
+      <li>Saliency heatmap overlay toggle button</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">Files Owned</div>
+  <div class="files-grid">
+    <div class="file-item">src/App.jsx <span class="file-arrow">Main app — routing, global state, data flow</span></div>
+    <div class="file-item">src/index.css <span class="file-arrow">Full CSS design system with CSS variables</span></div>
+    <div class="file-item">src/main.jsx <span class="file-arrow">React entry point</span></div>
+    <div class="file-item">src/components/ (all 16 components) <span class="file-arrow">Complete UI library</span></div>
+  </div>
+
+  <div class="sec-title">Presentation Speech</div>
+  <div class="speech-box">
+    <div class="speech-label">🎤 Say This During Presentation</div>
+    <p class="speech-text">"I am the Frontend Developer for SkinScan AI. I built the entire React user interface — 16 custom components totaling over 150KB of frontend code. The most complex component is AnalysisView, which renders the complete AI medical report — including an animated confidence ring, triage severity badge, ABCDE melanoma screening table, top 5 differential diagnoses with expandable detail cards, and medication safety alerts color-coded by danger level. I also built the Camera Capture component using the browser's MediaDevices API, a Voice Input system using the Web Speech Recognition API so patients can describe symptoms verbally, and an Adaptive Questionnaire that changes its questions dynamically based on patient responses — making symptom collection smarter and more accurate."</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--    PERSON 3 — BACKEND + DASHBOARD DEV        -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="role-header">
+    <div class="role-number">3</div>
+    <div class="role-info">
+      <h2>Backend + Dashboard Developer</h2>
+      <div class="role-title">Node.js REST APIs, Auth System, Doctor &amp; Admin Dashboards</div>
+    </div>
+    <div class="role-badge">[Team Member 3]</div>
+  </div>
+
+  <div class="sec-title">What This Person Built</div>
+  <p>This person built the <strong>entire server-side infrastructure</strong> — all REST APIs, user authentication, scan data management, doctor review system, admin monitoring panel, and both professional dashboards (Doctor and Admin).</p>
+
+  <div class="sec-title">1. Express.js Server Setup</div>
+  <pre>
+Framework:   Express.js  |  Server Version: SkinScan AI CDSS API v2.5.0
+Port:        5000 (or PORT env variable)
+Body Parser: JSON with 15MB limit (for base64 image data)
+CORS:        Enabled for React frontend cross-origin access
+Rate Limit:  Max 60 requests per 15 minutes per IP → HTTP 429 on excess</pre>
+
+  <div class="sec-title">2. All 8 REST API Endpoints</div>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Purpose</th><th>Auth Required</th></tr>
+    <tr><td><span class="pill pill-blue">GET</span></td><td><code>/api/health</code></td><td>Server health check — returns status, version, timestamp</td><td>No</td></tr>
+    <tr><td><span class="pill pill-green">POST</span></td><td><code>/api/auth/register</code></td><td>Register new user (name, email, password, role)</td><td>No</td></tr>
+    <tr><td><span class="pill pill-green">POST</span></td><td><code>/api/auth/login</code></td><td>Login → returns Bearer token</td><td>No</td></tr>
+    <tr><td><span class="pill pill-blue">GET</span></td><td><code>/api/user/scans</code></td><td>Fetch all scans for logged-in user</td><td>Yes</td></tr>
+    <tr><td><span class="pill pill-green">POST</span></td><td><code>/api/user/scans</code></td><td>Save a new scan result to user history</td><td>Optional</td></tr>
+    <tr><td><span class="pill pill-red">DELETE</span></td><td><code>/api/user/scans/:id</code></td><td>Delete specific scan by ID</td><td>Yes</td></tr>
+    <tr><td><span class="pill pill-blue">GET</span></td><td><code>/api/doctor/queue</code></td><td>Priority-sorted patient scan queue for doctors</td><td>No</td></tr>
+    <tr><td><span class="pill pill-green">POST</span></td><td><code>/api/doctor/review</code></td><td>Submit doctor's clinical review / override AI diagnosis</td><td>No</td></tr>
+    <tr><td><span class="pill pill-blue">GET</span></td><td><code>/api/admin/metrics</code></td><td>System-wide statistics — total scans, users, triage counts</td><td>No</td></tr>
+    <tr><td><span class="pill pill-green">POST</span></td><td><code>/api/analyze-skin</code></td><td>Main AI endpoint — receives image + symptoms, returns analysis</td><td>No (Rate limited)</td></tr>
+  </table>
+
+  <div class="sec-title">3. Authentication System</div>
+  <pre>
+Token Format: Base64 encoded → "userId:email:role"
+Header:       Authorization: Bearer &lt;token&gt;
+Roles:        patient | doctor | admin
+Validation:   getUserFromReq() decodes and parses token on every request
+Errors:       HTTP 401 returned for invalid/missing token</pre>
+
+  <div class="sec-title">4. Doctor Dashboard (DoctorDashboard.jsx — 14KB)</div>
+  <div class="card success">
+    <div class="card-title">Doctor Review System Features:</div>
+    <ul>
+      <li>Priority queue showing all patient scans sorted by urgency (Emergency first)</li>
+      <li>Each case shows: AI diagnosis, confidence %, triage level, scan timestamp</li>
+      <li>Doctor can <strong>Approve</strong> AI diagnosis, <strong>Override</strong> with their own, or <strong>Escalate</strong></li>
+      <li>Review payload includes: scanId, doctorId, doctorName, action, finalDiagnosis, clinical notes</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">5. Main AI Analysis Endpoint</div>
+  <pre>
+POST /api/analyze-skin
+Request:  { image: "base64...", provider: "claude|gemini|demo",
+            apiKey: "user_key", model: "claude-3-5-sonnet-20241022",
+            symptoms: { itching: true, bodyLocation: "arm" } }
+Response: { success: true, data: { ...full AI analysis... },
+            processedAt: "2026-09-04T09:00:00.000Z" }
+Error:    HTTP 500 with disclaimer if AI fails</pre>
+
+  <div class="sec-title">Files Owned</div>
+  <div class="files-grid">
+    <div class="file-item">server/index.js <span class="file-arrow">Main Express server — all 10 API routes</span></div>
+    <div class="file-item">server/services/authService.js <span class="file-arrow">Register, login, scan CRUD, doctor review logic</span></div>
+    <div class="file-item">server/.env <span class="file-arrow">API keys and PORT configuration</span></div>
+    <div class="file-item">src/components/DoctorDashboard.jsx <span class="file-arrow">Doctor panel UI — queue and review</span></div>
+    <div class="file-item">src/components/AdminDashboard.jsx <span class="file-arrow">Admin metrics panel UI</span></div>
+  </div>
+
+  <div class="sec-title">Presentation Speech</div>
+  <div class="speech-box">
+    <div class="speech-label">🎤 Say This During Presentation</div>
+    <p class="speech-text">"I am the Backend and Dashboard Developer for SkinScan AI. I built the complete Node.js Express server — version 2.5.0 — with 10 REST API endpoints covering authentication, scan management, doctor review, admin monitoring, and the main AI skin analysis endpoint. I implemented a JWT-style Bearer token authentication system with three role levels — patient, doctor, and admin. The server has a rate limiter set to 60 requests per 15 minutes per IP address to prevent API abuse. The main skin analysis endpoint accepts a 15MB base64 image, forwards it to the AI service, and returns a complete clinical JSON response. I also built both professional dashboards — the Doctor Dashboard which shows the AI-generated priority patient queue and allows doctors to approve, override, or escalate AI diagnoses — and the Admin Dashboard which shows system-wide metrics."</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--          PERSON 4 — DATA ENGINEER            -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="role-header">
+    <div class="role-number">4</div>
+    <div class="role-info">
+      <h2>Data Engineer</h2>
+      <div class="role-title">Dataset Research, 8-Step Preprocessing Pipeline &amp; Feature Extraction</div>
+    </div>
+    <div class="role-badge">[Team Member 4]</div>
+  </div>
+
+  <div class="sec-title">What This Person Built</div>
+  <p>This person built everything related to <strong>image quality, preprocessing, and feature extraction</strong> — ensuring only clean, properly analyzed images reach the AI. They also researched the datasets and implemented the Fitzpatrick skin tone detection system.</p>
+
+  <div class="sec-title">1. Dataset Research &amp; Definition</div>
+  <table>
+    <tr><th>Dataset</th><th>Source</th><th>Size</th><th>Role in Project</th></tr>
+    <tr><td><strong>HAM10000</strong></td><td>ISIC — International Skin Imaging Collaboration</td><td>10,015 dermoscopic images</td><td>Primary benchmark dataset for skin disease classification</td></tr>
+    <tr><td><strong>ISIC 2019</strong></td><td>ISIC Archive (isic-archive.com)</td><td>25,000+ dermoscopic images</td><td>Secondary validation dataset — 8 diagnostic categories</td></tr>
+  </table>
+  <p><strong>5 Disease Categories in Focus:</strong> Eczema (Atopic Dermatitis), Fungal Infections (Tinea Corporis), Nevus (Moles/Pigmented Lesions), Acne Vulgaris, Psoriasis Vulgaris</p>
+
+  <div class="sec-title">2. The 8-Step Image Preprocessing Pipeline</div>
+  <p><strong>File:</strong> <code>src/utils/imageProcessing.js</code> (8,125 bytes) — Runs before any image reaches the AI.</p>
+
+  <table>
+    <tr><th>Step</th><th>Name</th><th>Technical Algorithm</th><th>Threshold</th></tr>
+    <tr>
+      <td><strong>1</strong></td>
+      <td>Blur Detection</td>
+      <td>Laplacian Variance: <code>lap = gray[above]+gray[left]+gray[right]+gray[below] - 4×gray[center]</code> → variance of all lap values</td>
+      <td>lapVariance &lt; 75 → Blurry</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td>Brightness Check</td>
+      <td>Average pixel luma: <code>0.299×R + 0.587×G + 0.114×B</code></td>
+      <td>luma &lt; 45 → Too Dark; luma &gt; 215 → Too Bright</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td>Contrast Analysis</td>
+      <td>Standard deviation of all pixel brightness values across entire image</td>
+      <td>contrast &lt; 22 → Low Contrast</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td>Hair &amp; Shadow Detection</td>
+      <td>darkRatio = dark pixels / total pixels; combined with lapVariance heuristic</td>
+      <td>darkRatio &gt; 0.18 + lapVar &gt; 120 → Hair; darkRatio &gt; 0.22 + contrast &gt; 75 → Shadow</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td>Image Resize</td>
+      <td>Proportional scaling — larger dimension capped at 1024px</td>
+      <td>Max 1024px; Quality 0.88 JPEG</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td>Brightness/Contrast Adjust</td>
+      <td><code>ctx.filter = `brightness(${100+adj}%) contrast(${100+adj}%)`</code></td>
+      <td>Manual slider control by user before submission</td>
+    </tr>
+    <tr>
+      <td><strong>7</strong></td>
+      <td>Saliency Heatmap</td>
+      <td>Red-dominance: <code>intensity = min(255, (R-(G+B)/2) × 2.2)</code> → Jet palette mapping (Blue→Green→Yellow→Red)</td>
+      <td>Composited at 55% opacity over original image</td>
+    </tr>
+    <tr>
+      <td><strong>8</strong></td>
+      <td>Base64 Conversion</td>
+      <td><code>canvas.toDataURL('image/jpeg', quality)</code></td>
+      <td>Sent as JSON to POST /api/analyze-skin</td>
+    </tr>
+  </table>
+
+  <div class="card info">
+    <div class="card-title">📊 Quality Score Formula (0–100 points)</div>
+    <ul>
+      <li>Start with 100 points</li>
+      <li>Blurry image: <strong>-35 pts</strong> | Too dark: <strong>-20 pts</strong> | Too bright: <strong>-20 pts</strong></li>
+      <li>Low contrast: <strong>-15 pts</strong> | Hair obstruction: <strong>-15 pts</strong> | Shadows: <strong>-15 pts</strong> | Poor framing: <strong>-10 pts</strong></li>
+      <li>Bonus for very sharp image (lapVariance &gt; 220): <strong>+10 pts</strong></li>
+    </ul>
+  </div>
+
+  <div class="sec-title">3. Fitzpatrick Skin Tone Auto-Detection</div>
+  <p><strong>File:</strong> <code>src/utils/fitzpatrickDetector.js</code></p>
+  <table>
+    <tr><th>Type</th><th>Luminance Range</th><th>Skin Description</th></tr>
+    <tr><td>Type I</td><td>luma &gt; 76</td><td>Very Light / Pale White</td></tr>
+    <tr><td>Type II</td><td>luma &gt; 68</td><td>Fair / White</td></tr>
+    <tr><td>Type III</td><td>luma &gt; 58</td><td>Medium Fair / Olive White</td></tr>
+    <tr><td>Type IV</td><td>luma &gt; 46</td><td>Olive / Moderate Brown</td></tr>
+    <tr><td>Type V</td><td>luma &gt; 34</td><td>Brown / Dark Brown</td></tr>
+    <tr><td>Type VI</td><td>luma ≤ 34</td><td>Deep Dark Brown / Black</td></tr>
+  </table>
+  <div class="card success"><p>This ensures the AI <strong>calibrates its analysis for different skin tones</strong>, reducing racial bias in disease detection — a critical requirement for a medical AI system.</p></div>
+
+  <div class="sec-title">Files Owned</div>
+  <div class="files-grid">
+    <div class="file-item">src/utils/imageProcessing.js <span class="file-arrow">Full 8-step preprocessing pipeline + saliency heatmap</span></div>
+    <div class="file-item">src/utils/fitzpatrickDetector.js <span class="file-arrow">Fitzpatrick skin tone auto-detection (6 types)</span></div>
+    <div class="file-item">src/utils/skinClassifier.js <span class="file-arrow">Frontend feature classification logic (27KB)</span></div>
+    <div class="file-item">src/components/QualityCheck.jsx <span class="file-arrow">Quality score visualization UI</span></div>
+    <div class="file-item">src/components/Preprocessing.jsx <span class="file-arrow">Pipeline visualization UI</span></div>
+    <div class="file-item">src/components/LesionSegmentation.jsx <span class="file-arrow">Lesion outline display on image</span></div>
+  </div>
+
+  <div class="sec-title">Presentation Speech</div>
+  <div class="speech-box">
+    <div class="speech-label">🎤 Say This During Presentation</div>
+    <p class="speech-text">"I am the Data Engineer for SkinScan AI. My work ensures every image entering our AI system is clean, properly analyzed, and correctly preprocessed. I researched and defined two industry-standard datasets — HAM10000 with 10,015 dermoscopic images and ISIC 2019 with 25,000+ images. I then built an 8-step image preprocessing pipeline entirely in JavaScript using HTML5 Canvas and pixel-level mathematics. Step 1 uses Laplacian Variance — a standard computer vision algorithm — to detect blurry photos before they waste AI processing time. Steps 2 and 3 measure brightness and contrast using weighted luma formulas. Step 7 generates a Saliency Heatmap using erythema-based red-dominance scoring, overlaid as a Jet color palette visualization highlighting the diseased skin area. I also implemented Fitzpatrick skin tone auto-detection across all 6 skin types, which calibrates the AI's analysis to reduce racial bias in diagnosis."</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--    PERSON 5 — DEVOPS + TESTING + SECURITY    -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="role-header">
+    <div class="role-number">5</div>
+    <div class="role-info">
+      <h2>DevOps + Testing + Security Engineer</h2>
+      <div class="role-title">Drug Safety Engine, API Testing, Environment Security &amp; Deployment</div>
+    </div>
+    <div class="role-badge">[Team Member 5]</div>
+  </div>
+
+  <div class="sec-title">What This Person Built</div>
+  <p>This person built the <strong>safety and reliability layer</strong> — drug interaction detection, server security, environment configuration, code quality enforcement, API testing, and deployment architecture.</p>
+
+  <div class="sec-title">1. Drug Safety &amp; Allergy Cross-Check Engine</div>
+  <p><strong>File:</strong> <code>src/utils/drugSafetyChecker.js</code> — A clinical safety engine that scans patient medical history text and detects dangerous drug interactions automatically.</p>
+
+  <table>
+    <tr><th>Check #</th><th>Trigger Keywords</th><th>Alert Severity</th><th>Clinical Warning</th></tr>
+    <tr>
+      <td>1</td>
+      <td>hydrocortisone, steroid, betnovate, clobetasol + fungal/tinea condition</td>
+      <td><span class="pill pill-red">CRITICAL</span></td>
+      <td>TINEA INCOGNITO: Steroids on fungal infections cause aggressive hidden spread while redness appears to reduce</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>steroid on non-fungal conditions</td>
+      <td><span class="pill pill-orange">Medium</span></td>
+      <td>Limit OTC hydrocortisone to under 7 consecutive days — risk of skin thinning (atrophy)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>penicillin, amoxicillin, ampicillin</td>
+      <td><span class="pill pill-red">HIGH</span></td>
+      <td>Penicillin allergy flagged — substitute Macrolides (Azithromycin) for bacterial skin infections</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>sulfa, sulfonamide, bactrim</td>
+      <td><span class="pill pill-red">HIGH</span></td>
+      <td>Avoid Silver Sulfadiazine or oral Trimethoprim-Sulfamethoxazole entirely</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>asthma, allergic rhinitis, hay fever</td>
+      <td><span class="pill pill-blue">INFO</span></td>
+      <td>Atopic Triad history — prioritize ceramide barrier creams, avoid synthetic fragranced products</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>aspirin, salicylate</td>
+      <td><span class="pill pill-orange">Medium</span></td>
+      <td>Salicylate sensitivity — avoid high-concentration topical salicylic acid washes</td>
+    </tr>
+  </table>
+
+  <div class="card danger">
+    <div class="card-title">⚠️ Why Tinea Incognito Detection Is Critical</div>
+    <p>One of the most dangerous and common medication errors in dermatology is applying steroid creams on a fungal infection. Steroids suppress the immune response — the redness appears to decrease while the fungal infection spreads aggressively underneath the skin. Our engine detects this scenario and raises a <strong>CRITICAL red-flag warning</strong> before the patient makes that mistake.</p>
+  </div>
+
+  <div class="sec-title">2. Security Implementation</div>
+  <table>
+    <tr><th>Security Layer</th><th>Implementation</th><th>Purpose</th></tr>
+    <tr><td><strong>Rate Limiting</strong></td><td>express-rate-limit: 60 req / 15 min / IP</td><td>Prevents API abuse and DDoS attacks</td></tr>
+    <tr><td><strong>CORS</strong></td><td>cors() middleware on all routes</td><td>Allows React frontend, blocks unauthorized origins</td></tr>
+    <tr><td><strong>Body Size Limit</strong></td><td>express.json({ limit: '15mb' })</td><td>Prevents memory overflow from oversized payloads</td></tr>
+    <tr><td><strong>Input Validation</strong></td><td>Required field checks on every endpoint</td><td>HTTP 400 with descriptive error if missing</td></tr>
+    <tr><td><strong>Auth Middleware</strong></td><td>getUserFromReq() decodes Bearer token</td><td>HTTP 401 returned for invalid/missing tokens</td></tr>
+    <tr><td><strong>Env Security</strong></td><td>.env + .gitignore</td><td>API keys never exposed in source code</td></tr>
+  </table>
+
+  <div class="sec-title">3. Environment Configuration Management</div>
+  <pre>
+# server/.env (Backend)
+ANTHROPIC_API_KEY=sk-ant-...        ← Claude Vision API key
+GEMINI_API_KEY=AIzaSy...            ← Gemini Vision API key
+VISION_PROVIDER=demo                ← Default provider mode
+PORT=5000                           ← Express server port
+
+# .env (Frontend root)
+VITE_API_URL=http://localhost:5000  ← Backend URL for React calls</pre>
+
+  <div class="sec-title">4. Build &amp; Deployment Configuration</div>
+  <table>
+    <tr><th>Config File</th><th>Tool</th><th>Purpose</th></tr>
+    <tr><td><code>vite.config.js</code></td><td>Vite</td><td>Fast React dev server with HMR + production build to dist/</td></tr>
+    <tr><td><code>package.json</code></td><td>npm</td><td>Scripts: dev (port 5173), build (dist/), preview</td></tr>
+    <tr><td><code>.oxlintrc.json</code></td><td>OxLint</td><td>Fast Rust-based JavaScript linter for code quality</td></tr>
+    <tr><td><code>.gitignore</code></td><td>Git</td><td>Excludes .env, node_modules, dist/ from version control</td></tr>
+  </table>
+
+  <div class="card info">
+    <div class="card-title">🚀 Deployment Architecture</div>
+    <ul>
+      <li><strong>Frontend:</strong> Vercel — automatic deployment from GitHub on every push</li>
+      <li><strong>Backend:</strong> Railway or Render — Node.js hosting with environment variables in dashboard</li>
+      <li><strong>Security:</strong> API keys set in hosting dashboard — NOT in code repository</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">5. API Testing Checklist</div>
+  <table>
+    <tr><th>Endpoint</th><th>Test Scenarios Covered</th></tr>
+    <tr><td><code>POST /api/auth/register</code></td><td>Valid data ✓, Missing fields (HTTP 400) ✓, Duplicate email ✓</td></tr>
+    <tr><td><code>POST /api/auth/login</code></td><td>Valid credentials ✓, Wrong password ✓, Missing fields ✓</td></tr>
+    <tr><td><code>GET /api/user/scans</code></td><td>With valid token ✓, With invalid token (expect 401) ✓</td></tr>
+    <tr><td><code>POST /api/analyze-skin</code></td><td>With image ✓, Without image (HTTP 400) ✓, Oversized image ✓</td></tr>
+    <tr><td><code>GET /api/health</code></td><td>Should always return 200 OK ✓</td></tr>
+    <tr><td>Rate Limiter</td><td>61 rapid requests → HTTP 429 on 61st request ✓</td></tr>
+  </table>
+
+  <div class="sec-title">Files Owned</div>
+  <div class="files-grid">
+    <div class="file-item">src/utils/drugSafetyChecker.js <span class="file-arrow">Drug interaction + allergy cross-check engine</span></div>
+    <div class="file-item">src/utils/auth.js <span class="file-arrow">Frontend auth helper utilities</span></div>
+    <div class="file-item">src/utils/storage.js <span class="file-arrow">Local storage management for scan history</span></div>
+    <div class="file-item">server/.env + .env (root) <span class="file-arrow">Secure environment configuration</span></div>
+    <div class="file-item">.gitignore <span class="file-arrow">Prevents sensitive files from being pushed to GitHub</span></div>
+    <div class="file-item">.oxlintrc.json <span class="file-arrow">Code quality linting configuration</span></div>
+    <div class="file-item">vite.config.js <span class="file-arrow">Build and development server configuration</span></div>
+    <div class="file-item">package.json <span class="file-arrow">Project dependencies and npm scripts</span></div>
+    <div class="file-item">README.md <span class="file-arrow">Project documentation</span></div>
+  </div>
+
+  <div class="sec-title">Presentation Speech</div>
+  <div class="speech-box">
+    <div class="speech-label">🎤 Say This During Presentation</div>
+    <p class="speech-text">"I am the DevOps, Testing, and Security Engineer for SkinScan AI. My most important contribution is the Drug Safety Cross-Check Engine — a clinical safety system that scans a patient's reported medical history and automatically detects dangerous drug interactions. For example, one of the most dangerous medication errors in dermatology is applying steroid creams on fungal infections — this causes Tinea Incognito where the infection spreads aggressively while appearing to reduce. Our system detects this and raises a critical red-flag warning. I also implemented rate limiting on the backend — 60 requests per 15 minutes per IP — CORS security, input validation on all endpoints, and secure environment variable management so API keys are never exposed in source code. On the DevOps side, I configured the Vite build system, set up OxLint for code quality, and prepared the deployment architecture for Vercel and Railway hosting."</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--           FINAL SUMMARY + Q&A                -->
+<!-- ════════════════════════════════════════════ -->
+<div class="summary-section">
+  <h2>📊 Complete Team Summary</h2>
+  <p class="sub">SkinScan AI CDSS v2.5 — NIT Nagpur | Group-8 | September 2026</p>
+
+  <table>
+    <tr><th>#</th><th>Role</th><th>Core Technical Work</th><th>Key Files</th></tr>
+    <tr>
+      <td>1</td>
+      <td><strong>AI/ML Engineer</strong><br><small>Sachin Kumar</small></td>
+      <td>Claude + Gemini APIs, 3-Model Ensemble, ICD-10 Coding, ABCDE Analysis, Uncertainty System</td>
+      <td><code>visionService.js</code><br><code>classifierEngine.js</code></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Frontend Developer</strong><br><small>[Name 2]</small></td>
+      <td>16 React Components, Camera UI, Voice Input, Adaptive Questionnaire, Heatmap Display</td>
+      <td><code>App.jsx</code><br><code>all components/</code></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Backend + Dashboard Dev</strong><br><small>[Name 3]</small></td>
+      <td>10 REST APIs, JWT Auth, Rate Limiting, Doctor Priority Queue, Admin Metrics</td>
+      <td><code>server/index.js</code><br><code>authService.js</code></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Data Engineer</strong><br><small>[Name 4]</small></td>
+      <td>HAM10000 + ISIC Datasets, 8-Step Preprocessing, Laplacian Blur, Heatmap, Fitzpatrick Scale</td>
+      <td><code>imageProcessing.js</code><br><code>fitzpatrickDetector.js</code></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>DevOps + Testing + Security</strong><br><small>[Name 5]</small></td>
+      <td>Drug Safety Engine, Rate Limiting, .env Security, Vite Config, API Testing, Deployment</td>
+      <td><code>drugSafetyChecker.js</code><br><code>vite.config.js</code></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Q&A SECTION -->
+<div class="section">
+  <h2 style="font-size:18pt; font-weight:800; color:var(--primary); margin-bottom:6px;">❓ Viva Questions &amp; Expert Answers</h2>
+  <p style="color:var(--muted); margin-bottom:28px;">Prepare these 6 answers — examiners commonly ask these questions for AI medical projects.</p>
+
+  <div class="qna-item">
+    <div class="qna-q">What is a Clinical Decision Support System (CDSS)?</div>
+    <div class="qna-a">A CDSS is an AI tool that helps doctors make better clinical decisions by analyzing patient data and providing evidence-based recommendations. Our system is NOT a replacement for doctors — it is a support tool that provides triage, differential diagnoses, and medication safety information to assist clinical judgment.</div>
+  </div>
+
+  <div class="qna-item">
+    <div class="qna-q">Why did you use Claude AND Gemini? Why not just one model?</div>
+    <div class="qna-a">Single-model dependency is a reliability risk. If Claude's API is down or rate-limited, Gemini automatically takes over. If both APIs fail, our local fallback classifier — which runs entirely on the server using pixel-level analysis without any external API — ensures the system never crashes. This 3-tier fallback architecture makes the system production-grade reliable.</div>
+  </div>
+
+  <div class="qna-item">
+    <div class="qna-q">What is Tinea Incognito and why did you implement detection for it?</div>
+    <div class="qna-a">Tinea Incognito is a dangerous condition caused by applying steroid creams on a fungal skin infection. Steroids suppress the immune response — redness appears to improve while the fungal infection spreads aggressively underneath the skin. It is one of the most common medication errors in dermatology. Our Drug Safety Engine automatically detects this scenario when a patient's history mentions steroids alongside a fungal diagnosis and raises a CRITICAL red-flag warning.</div>
+  </div>
+
+  <div class="qna-item">
+    <div class="qna-q">What is the Fitzpatrick Scale and why is it important in your project?</div>
+    <div class="qna-a">The Fitzpatrick Scale is a dermatological classification system that categorizes human skin color into 6 types based on melanin content and UV response — from Type I (very pale) to Type VI (very dark). Our system uses image luminance to auto-detect which Fitzpatrick type the patient is, so the AI can calibrate its analysis accordingly. This reduces racial bias in diagnosis, which is critical for a medical AI system to be fair and accurate across all populations.</div>
+  </div>
+
+  <div class="qna-item">
+    <div class="qna-q">What is ABCDE analysis in dermatology?</div>
+    <div class="qna-a">ABCDE is a standard dermatology screening rule for early melanoma detection: A = Asymmetry of the lesion, B = Border irregularity, C = Color variation within the lesion, D = Diameter greater than 6mm is a concern, E = Evolution or change over time. Our system computes A via quadrant pixel asymmetry scoring, B and C from pixel analysis, and E from patient-reported duration. If the mole scores high on these criteria, the system flags it as a priority dermoscopy case.</div>
+  </div>
+
+  <div class="qna-item">
+    <div class="qna-q">What are ICD-10 and SNOMED-CT codes? Why did you include them?</div>
+    <div class="qna-a">ICD-10 (International Classification of Diseases, 10th Revision) is the global standard medical coding system used by hospitals, insurance systems, and health records worldwide. SNOMED-CT is a comprehensive clinical terminology system. By mapping every AI diagnosis to its ICD-10 and SNOMED-CT code — for example, L40.0 for Psoriasis Vulgaris — our system's output can be directly integrated with hospital Electronic Medical Record (EMR) systems, making it clinically interoperable and professionally credible.</div>
+  </div>
+
+  <div style="margin-top: 40px; padding: 20px 24px; background: #f0fdf4; border: 1px solid #2d7d46; border-radius: 10px; text-align: center;">
+    <p style="font-size: 10pt; color: var(--muted);">SkinScan AI CDSS v2.5 — Academic Report | NIT Nagpur | Computer Science &amp; Engineering | Group-8</p>
+    <p style="font-size: 9pt; color: #999; margin-top: 4px;">This system is a Clinical Decision Support Tool. It does not provide a formal medical diagnosis. Always consult a licensed clinician.</p>
+  </div>
+</div>
+
+</div><!-- end .page -->
+
+<script>
+  // Auto-trigger print dialog for PDF saving
+  window.addEventListener('load', function() {
+    // Small delay so fonts load properly
+    setTimeout(function() {
+      document.title = 'SkinScan AI Team Roles - NIT Nagpur Group-8';
+    }, 500);
+  });
+</script>
+</body>
+</html>

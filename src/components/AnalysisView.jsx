@@ -98,32 +98,32 @@ export default function AnalysisView({
   // Triage configuration styling
   const triageConfig = {
     Emergency: {
-      bg: 'bg-rose-950/90 text-rose-200 border-rose-500/80',
-      badge: 'bg-rose-500 text-white',
+      bg: 'bg-rose-500/10 text-rose-200 border-rose-500/40',
+      badge: 'bg-rose-600 text-white',
       label: 'Emergency / Immediate Evaluation Needed',
       icon: AlertTriangle
     },
     'Same-Day': {
-      bg: 'bg-rose-950/80 text-rose-300 border-rose-600/60',
+      bg: 'bg-rose-500/10 text-rose-200 border-rose-500/30',
       badge: 'bg-rose-600 text-white',
       label: 'Same-Day Medical Evaluation Recommended',
       icon: AlertCircle
     },
     'Dermatologist Soon': {
-      bg: 'bg-amber-950/80 text-amber-300 border-amber-500/60',
-      badge: 'bg-amber-400 text-slate-950',
+      bg: 'bg-amber-500/10 text-amber-200 border-amber-500/30',
+      badge: 'bg-amber-500 text-slate-950',
       label: 'Dermatologist Evaluation Soon (1-2 Weeks)',
       icon: Clock
     },
     'Routine Consultation': {
-      bg: 'bg-teal-950/80 text-teal-300 border-teal-500/50',
+      bg: 'bg-teal-500/10 text-teal-200 border-teal-500/30',
       badge: 'bg-teal-400 text-slate-950',
       label: 'Routine Consultation Appropriate',
       icon: CheckCircle2
     },
     Monitor: {
-      bg: 'bg-slate-900/90 text-slate-300 border-slate-700',
-      badge: 'bg-slate-700 text-slate-200',
+      bg: 'bg-slate-900 text-slate-200 border-slate-800',
+      badge: 'bg-slate-700 text-white',
       label: 'Monitoring May Be Appropriate',
       icon: Activity
     }
@@ -138,28 +138,28 @@ export default function AnalysisView({
       <div className="flex items-center justify-between">
         <button
           onClick={onNewScan}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 text-slate-200 hover:text-slate-100 border border-slate-800 text-xs font-bold shadow-sm cursor-pointer hover:bg-slate-800 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-cyan-400" />
           <span>New Scan</span>
         </button>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowCaseSummaryModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-teal-300 border border-teal-800/40 text-xs font-bold shadow-sm"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-extrabold shadow-sm cursor-pointer transition-colors"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-4 h-4 text-cyan-400" />
             <span>Tele-Derm Summary</span>
           </button>
 
           <button
             onClick={onSaveToHistory}
             disabled={isSaved}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black transition-all border cursor-pointer ${
               isSaved 
-                ? 'bg-emerald-950 text-emerald-300 border-emerald-800/50'
-                : 'bg-slate-900 hover:bg-slate-800 text-cyan-300 border-cyan-800/40 shadow-sm'
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                : 'bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 border-transparent shadow-lg shadow-cyan-500/20'
             }`}
           >
             <BookmarkCheck className="w-4 h-4" />
@@ -170,25 +170,25 @@ export default function AnalysisView({
 
       {/* AI UNCERTAINTY CIRCUIT BREAKER ALERT (If confidence is low / OOD) */}
       {uncertaintySystem.isUncertain && (
-        <div className="glass-card bg-amber-950/60 border-2 border-amber-500 p-6 rounded-3xl text-left space-y-4 shadow-2xl animate-in zoom-in-95">
-          <div className="flex items-center gap-3 text-amber-300">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/50">
+        <div className="glass-card bg-amber-500/10 border-2 border-amber-500/50 p-6 rounded-3xl text-left space-y-4 shadow-xl animate-in zoom-in-95">
+          <div className="flex items-center gap-3 text-amber-200">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center shrink-0 border border-amber-500/40">
               <ShieldAlert className="w-7 h-7 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-100">AI Confidence Insufficient for Reliable Assessment</h3>
-              <p className="text-xs text-amber-300/90 font-medium">Safety Circuit Breaker Triggered</p>
+              <h3 className="text-lg font-extrabold text-slate-100">AI Confidence Insufficient for Reliable Assessment</h3>
+              <p className="text-xs text-amber-300 font-bold">Safety Circuit Breaker Triggered</p>
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm text-amber-200/90 leading-relaxed bg-amber-950/80 p-3.5 rounded-2xl border border-amber-800/60">
+          <p className="text-xs sm:text-sm text-amber-200 font-medium leading-relaxed bg-slate-950/80 p-4 rounded-2xl border border-amber-500/30">
             {uncertaintySystem.reason || "The lesion appearance or symptom presentation falls outside standard high-confidence visual clusters. To avoid false reassurance or incorrect classification, the system recommends an in-person or tele-dermatology consultation."}
           </p>
 
           <div className="flex items-center gap-3">
             <button
               onClick={onFindDermatologist}
-              className="px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-amber-400/20"
+              className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow-md cursor-pointer"
             >
               <MapPin className="w-4 h-4" />
               <span>Consult a Dermatologist</span>
@@ -198,22 +198,22 @@ export default function AnalysisView({
       )}
 
       {/* Main Results Card */}
-      <div className="glass-card rounded-3xl border border-slate-800 p-6 space-y-6 shadow-2xl relative overflow-hidden text-left">
+      <div className="glass-card-premium rounded-3xl border border-slate-800 p-6 space-y-6 shadow-2xl relative overflow-hidden text-left bg-slate-900/90 text-slate-100">
         
         {/* Triage Level Banner */}
         {triage.level && (
           <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${triageStyle.bg}`}>
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full shrink-0 ${triageStyle.badge}`}></div>
+              <div className={`w-3.5 h-3.5 rounded-full shrink-0 ${triageStyle.badge}`}></div>
               <div>
-                <span className="text-xs font-bold block">{triageStyle.label}</span>
+                <span className="text-xs font-black block">{triageStyle.label}</span>
                 {triage.escalationReason && (
-                  <p className="text-[11px] opacity-90 mt-0.5">{triage.escalationReason}</p>
+                  <p className="text-[11px] font-semibold opacity-90 mt-0.5">{triage.escalationReason}</p>
                 )}
               </div>
             </div>
             {triage.score >= 3 && (
-              <span className="text-[10px] uppercase font-mono tracking-wider font-extrabold px-2.5 py-1 rounded-full bg-slate-950/80 text-amber-300 border border-amber-500/40 shrink-0 self-start sm:self-auto">
+              <span className="text-[10px] uppercase font-mono tracking-wider font-black px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 self-start sm:self-auto shadow-xs">
                 Escalation Priority #{triage.score}
               </span>
             )}
@@ -222,12 +222,12 @@ export default function AnalysisView({
 
         {/* Red Flags Callout */}
         {triage.redFlags && triage.redFlags.length > 0 && (
-          <div className="bg-rose-950/40 border border-rose-800/40 rounded-2xl p-4 space-y-2">
-            <div className="flex items-center gap-2 text-rose-300 font-bold text-xs">
+          <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-4 space-y-2">
+            <div className="flex items-center gap-2 text-rose-300 font-extrabold text-xs">
               <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
               <span>Red Flag Clinical Symptoms Flagged:</span>
             </div>
-            <ul className="list-disc list-inside text-xs text-rose-200/90 space-y-0.5 font-medium">
+            <ul className="list-disc list-inside text-xs text-rose-200 space-y-1 font-bold">
               {triage.redFlags.map((flag, i) => (
                 <li key={i}>{flag}</li>
               ))}
@@ -237,13 +237,13 @@ export default function AnalysisView({
 
         {/* Primary Diagnosis & Confidence */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-b border-slate-800 pb-6">
-          <div className="md:col-span-4 relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 h-48 md:h-full flex items-center justify-center">
+          <div className="md:col-span-4 relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 h-48 md:h-full flex items-center justify-center shadow-lg">
             <img
               src={imageSrc}
               alt="Analyzed skin"
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-2 left-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-cyan-300 font-mono border border-cyan-500/30 flex items-center gap-1">
+            <div className="absolute top-2 left-2 bg-slate-950/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-cyan-300 font-mono font-bold border border-cyan-500/40 flex items-center gap-1 shadow-md">
               <Sparkles className="w-3 h-3 text-cyan-400" />
               <span>CDSS AI Scan</span>
             </div>
@@ -251,38 +251,64 @@ export default function AnalysisView({
 
           <div className="md:col-span-8 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-950 text-cyan-300 border border-cyan-800">
+              <span className="px-3 py-1 rounded-full text-xs font-black bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 shadow-xs">
                 Confidence: {confidence}%
               </span>
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-200 border border-slate-700 shadow-xs">
                 Stage: {severity}
               </span>
+              {analysisData.icd10 && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-black bg-teal-500/10 text-teal-300 border border-teal-500/30 shadow-xs">
+                  ICD-10: {analysisData.icd10}
+                </span>
+              )}
+              {analysisData.fitzpatrick && (
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                  Fitzpatrick {analysisData.fitzpatrick.fitzpatrickType || 'III'}
+                </span>
+              )}
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
                 {primaryCondition}
               </h2>
             </div>
 
-            <div className="space-y-1">
-              <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
-                <div 
-                  className="bg-gradient-to-r from-cyan-500 via-teal-400 to-blue-500 h-full transition-all duration-1000 ease-out"
-                  style={{ width: `${confidence}%` }}
-                ></div>
+            {/* 3-Model Ensemble Confidence Breakdown */}
+            {analysisData.ensembleBreakdown && (
+              <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-200">
+                  <span>3-Model Ensemble AI Pipeline Breakdown</span>
+                  <span className="text-cyan-300 font-mono font-black">Combined: {analysisData.ensembleBreakdown.ensembleScore}%</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-[10px] font-mono text-slate-300">
+                  <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-xs">
+                    <span className="block text-slate-400 font-bold">Model A (Vision):</span>
+                    <span className="text-teal-300 font-black">{analysisData.ensembleBreakdown.visualFeatureModelA}%</span>
+                  </div>
+                  <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-xs">
+                    <span className="block text-slate-400 font-bold">Model B (Saliency):</span>
+                    <span className="text-cyan-300 font-black">{analysisData.ensembleBreakdown.saliencyTextureModelB}%</span>
+                  </div>
+                  <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-xs">
+                    <span className="block text-slate-400 font-bold">Model C (Context):</span>
+                    <span className="text-blue-300 font-black">{analysisData.ensembleBreakdown.multimodalContextModelC}%</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
+
         {/* Observation Summary */}
-        <div className="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-2">
-          <div className="flex items-center gap-2 text-slate-200 text-sm font-semibold">
+        <div className="bg-slate-950/80 rounded-2xl p-4.5 border border-slate-800 space-y-2">
+          <div className="flex items-center gap-2 text-slate-100 text-sm font-extrabold">
             <Info className="w-4 h-4 text-cyan-400" />
             <span>AI Observation Summary</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
             {explanation}
           </p>
         </div>
@@ -290,18 +316,18 @@ export default function AnalysisView({
         {/* Visual Observations Matrix */}
         {visualObservations && Object.keys(visualObservations).length > 0 && (
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-teal-400" />
+            <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-cyan-400" />
               <span>Visible Skin Feature Observations</span>
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {Object.entries(visualObservations).map(([key, val]) => (
-                <div key={key} className="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                <div key={key} className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                     {key}
                   </span>
-                  <span className="text-xs font-medium text-cyan-200 mt-0.5 block truncate" title={val}>
+                  <span className="text-xs font-extrabold text-teal-300 mt-0.5 block truncate" title={val}>
                     {val}
                   </span>
                 </div>
@@ -313,14 +339,14 @@ export default function AnalysisView({
         {/* Recommendations & Actionable Next Steps */}
         {recommendations && recommendations.length > 0 && (
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Actionable Next Steps & Care Guidance</span>
             </h3>
 
             <ul className="space-y-2">
               {recommendations.map((rec, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded-xl border border-slate-800/60">
+                <li key={idx} className="flex items-start gap-2 text-xs text-slate-200 font-semibold bg-slate-950/80 p-3 rounded-xl border border-slate-800">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>{rec}</span>
                 </li>
@@ -335,36 +361,36 @@ export default function AnalysisView({
         {/* Differential Diagnoses with Supporting & Unfitting Features */}
         {differentialDiagnoses && differentialDiagnoses.length > 0 && (
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-2">
               <Stethoscope className="w-4 h-4 text-cyan-400" />
               <span>Ranked Differential Diagnoses & Clinical Features</span>
             </h3>
 
             <div className="space-y-3">
               {differentialDiagnoses.map((item, idx) => (
-                <div key={idx} className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
+                <div key={idx} className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-100">{item.name}</span>
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-cyan-300">
+                    <span className="text-xs font-black text-slate-100">{item.name}</span>
+                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
                       {item.confidence}% Match
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400">{item.description}</p>
+                  <p className="text-xs text-slate-300 font-medium">{item.description}</p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800/60">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800">
                     {item.supportingFeatures && (
-                      <div className="text-emerald-300 bg-emerald-950/30 p-2 rounded-xl border border-emerald-900/40">
-                        <span className="font-semibold block text-emerald-400">✓ Supporting Features:</span>
-                        <ul className="list-disc list-inside space-y-0.5 text-[10px]">
+                      <div className="text-emerald-200 bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-500/30">
+                        <span className="font-extrabold block text-emerald-300">✓ Supporting Features:</span>
+                        <ul className="list-disc list-inside space-y-0.5 text-[10px] font-semibold text-emerald-200">
                           {item.supportingFeatures.map((sf, i) => <li key={i}>{sf}</li>)}
                         </ul>
                       </div>
                     )}
 
                     {item.unfittingFeatures && (
-                      <div className="text-amber-300 bg-amber-950/30 p-2 rounded-xl border border-amber-900/40">
-                        <span className="font-semibold block text-amber-400">✕ Features That Don't Fit:</span>
-                        <ul className="list-disc list-inside space-y-0.5 text-[10px]">
+                      <div className="text-amber-200 bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/30">
+                        <span className="font-extrabold block text-amber-300">✕ Features That Don't Fit:</span>
+                        <ul className="list-disc list-inside space-y-0.5 text-[10px] font-semibold text-amber-200">
                           {item.unfittingFeatures.map((uf, i) => <li key={i}>{uf}</li>)}
                         </ul>
                       </div>
@@ -372,8 +398,8 @@ export default function AnalysisView({
                   </div>
 
                   {item.distinguishingFactors && (
-                    <p className="text-[11px] text-slate-300 italic bg-slate-950/60 p-2 rounded-xl">
-                      <strong>Distinguishing Factor:</strong> {item.distinguishingFactors}
+                    <p className="text-[11px] text-slate-300 font-medium italic bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                      <strong className="text-slate-200">Distinguishing Factor:</strong> {item.distinguishingFactors}
                     </p>
                   )}
                 </div>
@@ -384,53 +410,68 @@ export default function AnalysisView({
 
         {/* ABCDE Skin Cancer Screening Card (if pigmented lesion) */}
         {abcdeAnalysis && abcdeAnalysis.asymmetry && (
-          <div className="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3">
-            <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-teal-400" />
+          <div className="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 space-y-3">
+            <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-cyan-400" />
               <span>ABCDE Suspicious Lesion Screening Breakdown</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <span className="font-bold text-cyan-400">A - Asymmetry:</span>
-                <p className="text-[11px] text-slate-300 mt-0.5">{abcdeAnalysis.asymmetry}</p>
+              <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                <span className="font-extrabold text-cyan-300 block">A - Asymmetry:</span>
+                <p className="text-[11px] text-slate-300 font-medium mt-0.5">{abcdeAnalysis.asymmetry}</p>
               </div>
 
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <span className="font-bold text-cyan-400">B - Border Irregularity:</span>
-                <p className="text-[11px] text-slate-300 mt-0.5">{abcdeAnalysis.border}</p>
+              <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                <span className="font-extrabold text-cyan-300 block">B - Border Irregularity:</span>
+                <p className="text-[11px] text-slate-300 font-medium mt-0.5">{abcdeAnalysis.border}</p>
               </div>
 
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <span className="font-bold text-cyan-400">C - Color Variation:</span>
-                <p className="text-[11px] text-slate-300 mt-0.5">{abcdeAnalysis.color}</p>
+              <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                <span className="font-extrabold text-cyan-300 block">C - Color Variation:</span>
+                <p className="text-[11px] text-slate-300 font-medium mt-0.5">{abcdeAnalysis.color}</p>
               </div>
 
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <span className="font-bold text-cyan-400">D - Diameter:</span>
-                <p className="text-[11px] text-slate-300 mt-0.5">{abcdeAnalysis.diameter}</p>
+              <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                <span className="font-extrabold text-cyan-300 block">D - Diameter:</span>
+                <p className="text-[11px] text-slate-300 font-medium mt-0.5">{abcdeAnalysis.diameter}</p>
               </div>
             </div>
 
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
-              <span className="font-bold text-cyan-400">E - Evolution / Change:</span>
-              <p className="text-[11px] text-slate-300 mt-0.5">{abcdeAnalysis.evolution}</p>
+            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs">
+              <span className="font-extrabold text-cyan-300 block">E - Evolution / Change:</span>
+              <p className="text-[11px] text-slate-300 font-medium mt-0.5">{abcdeAnalysis.evolution}</p>
             </div>
           </div>
         )}
 
         {/* Medication & Treatment Safety Layer */}
-        {medicationSafety && (medicationSafety.warnings?.length > 0 || medicationSafety.safeGeneralAdvice?.length > 0) && (
-          <div className="bg-amber-950/30 border border-amber-700/40 rounded-2xl p-4 space-y-3">
-            <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
+        {medicationSafety && (medicationSafety.warnings?.length > 0 || medicationSafety.safeGeneralAdvice?.length > 0 || medicationSafety.allergyAlerts?.length > 0) && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-extrabold text-amber-300 flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-amber-400" />
               <span>Treatment & Medication Safety Layer</span>
             </h3>
 
+            {/* Drug Interaction & Allergy Alerts */}
+            {medicationSafety.allergyAlerts && medicationSafety.allergyAlerts.length > 0 && (
+              <div className="space-y-2">
+                {medicationSafety.allergyAlerts.map((alert, i) => (
+                  <div key={i} className="bg-rose-500/10 border border-rose-500/40 p-3 rounded-xl text-xs space-y-1">
+                    <span className="font-black text-rose-300 flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{alert.title}</span>
+                    </span>
+                    <p className="text-[11px] text-rose-200 font-medium">{alert.message}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {medicationSafety.warnings && medicationSafety.warnings.length > 0 && (
               <div className="space-y-1">
                 {medicationSafety.warnings.map((warn, i) => (
-                  <p key={i} className="text-xs font-semibold text-rose-300 bg-rose-950/60 p-2 rounded-xl border border-rose-800/50">
+                  <p key={i} className="text-xs font-bold text-rose-300 bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/30">
                     ⚠️ {warn}
                   </p>
                 ))}
@@ -438,7 +479,7 @@ export default function AnalysisView({
             )}
 
             {medicationSafety.safeGeneralAdvice && medicationSafety.safeGeneralAdvice.length > 0 && (
-              <ul className="list-disc list-inside text-xs text-slate-300 space-y-1">
+              <ul className="list-disc list-inside text-xs text-slate-300 font-medium space-y-1">
                 {medicationSafety.safeGeneralAdvice.map((adv, i) => (
                   <li key={i}>{adv}</li>
                 ))}
@@ -448,13 +489,13 @@ export default function AnalysisView({
         )}
 
         {/* Mandatory Medical Disclaimer */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 space-y-1 text-xs text-slate-400">
-          <span className="font-bold text-slate-300 block">CDSS Regulatory Framing Notice:</span>
-          <p className="leading-relaxed">
+        <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-1 text-xs text-slate-400">
+          <span className="font-extrabold text-slate-200 block">CDSS Regulatory Framing Notice:</span>
+          <p className="leading-relaxed font-medium">
             {disclaimer || "SkinScan AI is a Clinical Decision Support System. It provides automated observational screening and does not replace certified medical diagnosis. Always consult a licensed dermatologist."}
           </p>
           {modelMetadata.version && (
-            <p className="text-[10px] font-mono text-slate-500 pt-1">
+            <p className="text-[10px] font-mono font-bold text-slate-500 pt-1">
               Traceability Metadata: {modelMetadata.version} • {modelMetadata.provider} • Latency: {modelMetadata.inferenceTimeMs || 120}ms
             </p>
           )}
@@ -466,7 +507,7 @@ export default function AnalysisView({
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <button
           onClick={onFindDermatologist}
-          className="w-full sm:w-1/2 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20"
+          className="w-full sm:w-1/2 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-400 hover:from-teal-400 hover:to-emerald-300 text-slate-950 text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 cursor-pointer"
         >
           <MapPin className="w-4 h-4" />
           <span>Find Dermatologist Near Me</span>
@@ -474,7 +515,7 @@ export default function AnalysisView({
 
         <button
           onClick={onNewScan}
-          className="w-full sm:w-1/2 py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold border border-slate-800 flex items-center justify-center gap-2 transition-colors"
+          className="w-full sm:w-1/2 py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-bold border border-slate-800 flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
           <Activity className="w-4 h-4 text-cyan-400" />
           <span>Perform Another Scan</span>
@@ -484,24 +525,24 @@ export default function AnalysisView({
       {/* Tele-Dermatology Printable / Formatted Case Summary Modal */}
       {showCaseSummaryModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass-card max-w-xl w-full max-h-[90vh] overflow-y-auto rounded-3xl p-6 border border-slate-700 space-y-4 text-left relative animate-in fade-in zoom-in-95">
+          <div className="bg-slate-900 max-w-xl w-full max-h-[90vh] overflow-y-auto rounded-3xl p-6 border border-slate-800 space-y-4 text-left relative shadow-2xl animate-in fade-in zoom-in-95 text-slate-100">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
-                <h3 className="text-lg font-bold text-slate-100">Tele-Dermatology Clinician Case Summary</h3>
-                <p className="text-xs text-slate-400">Printable summary ready for physician consultation</p>
+                <h3 className="text-lg font-extrabold text-slate-100">Tele-Dermatology Clinician Case Summary</h3>
+                <p className="text-xs text-slate-400 font-medium">Printable summary ready for physician consultation</p>
               </div>
               <button
                 onClick={() => setShowCaseSummaryModal(false)}
-                className="p-2 rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
+                className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-100 border border-slate-700 font-bold"
               >
                 ✕
               </button>
             </div>
 
-            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs text-slate-300">
+            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs text-slate-200">
               <div className="border-b border-slate-800 pb-2">
-                <p className="font-bold text-cyan-400">SKINSCAN AI TELE-DERMATOLOGY REPORT</p>
-                <p className="text-[10px] text-slate-500">Date: {new Date().toLocaleString()} • Ref: #{Math.random().toString(36).substring(2, 8).toUpperCase()}</p>
+                <p className="font-extrabold text-cyan-400">SKINSCAN AI TELE-DERMATOLOGY REPORT</p>
+                <p className="text-[10px] text-slate-400 font-bold">Date: {new Date().toLocaleString()} • Ref: #{Math.random().toString(36).substring(2, 8).toUpperCase()}</p>
               </div>
 
               <p><strong>Primary AI Observation:</strong> {primaryCondition} ({confidence}% confidence)</p>
@@ -517,7 +558,7 @@ export default function AnalysisView({
                 onClick={() => {
                   window.print();
                 }}
-                className="w-1/2 py-2.5 px-4 rounded-xl bg-cyan-500 text-slate-950 text-xs font-bold flex items-center justify-center gap-1.5"
+                className="w-1/2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 text-xs font-black flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Print / Download PDF</span>
@@ -525,7 +566,7 @@ export default function AnalysisView({
 
               <button
                 onClick={() => setShowCaseSummaryModal(false)}
-                className="w-1/2 py-2.5 px-4 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold border border-slate-800"
+                className="w-1/2 py-2.5 px-4 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold border border-slate-700 cursor-pointer"
               >
                 Close Summary
               </button>
@@ -537,4 +578,5 @@ export default function AnalysisView({
     </div>
   );
 }
+
 

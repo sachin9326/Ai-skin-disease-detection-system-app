@@ -123,9 +123,14 @@ export default function VoiceInput({ onTranscriptExtracted }) {
           >
             <option value="hi-IN" className="bg-slate-900 text-slate-200">Hindi / Hinglish (हिन्दी)</option>
             <option value="en-US" className="bg-slate-900 text-slate-200">English (US)</option>
+            <option value="mr-IN" className="bg-slate-900 text-slate-200">Marathi (मराठी)</option>
+            <option value="ta-IN" className="bg-slate-900 text-slate-200">Tamil (தமிழ்)</option>
+            <option value="bn-IN" className="bg-slate-900 text-slate-200">Bengali (বাংলা)</option>
+            <option value="te-IN" className="bg-slate-900 text-slate-200">Telugu (తెలుగు)</option>
           </select>
         </div>
       </div>
+
 
       {supportError ? (
         <p className="text-xs text-amber-400 bg-amber-950/40 p-3 rounded-2xl border border-amber-800/40">

@@ -1,0 +1,175 @@
+{
+  "totalTrainImages": 7991,
+  "totalValImages": 2024,
+  "totalTestImages": 1512,
+  "valMacroAuc": 0.8406,
+  "testMacroAuc": 0.7958,
+  "overallTestAccuracy": 0.6362,
+  "melanomaRecall": 0.2456,
+  "melanomaSafetyPassed": false,
+  "perClass": [
+    {
+      "classId": "nv",
+      "code": "NV",
+      "name": "nv",
+      "precision": 0.6727,
+      "recall": 0.9472,
+      "specificity": 0.3051,
+      "f1Score": 0.7867,
+      "support": 909,
+      "tp": 861,
+      "fp": 419,
+      "fn": 48,
+      "tn": 184
+    },
+    {
+      "classId": "mel",
+      "code": "MEL",
+      "name": "mel",
+      "precision": 0.3559,
+      "recall": 0.2456,
+      "specificity": 0.9433,
+      "f1Score": 0.2907,
+      "support": 171,
+      "tp": 42,
+      "fp": 76,
+      "fn": 129,
+      "tn": 1265
+    },
+    {
+      "classId": "bkl",
+      "code": "BKL",
+      "name": "bkl",
+      "precision": 0.7021,
+      "recall": 0.1521,
+      "specificity": 0.9892,
+      "f1Score": 0.25,
+      "support": 217,
+      "tp": 33,
+      "fp": 14,
+      "fn": 184,
+      "tn": 1281
+    },
+    {
+      "classId": "bcc",
+      "code": "BCC",
+      "name": "bcc",
+      "precision": 0.4828,
+      "recall": 0.1505,
+      "specificity": 0.9894,
+      "f1Score": 0.2295,
+      "support": 93,
+      "tp": 14,
+      "fp": 15,
+      "fn": 79,
+      "tn": 1404
+    },
+    {
+      "classId": "akiec",
+      "code": "AKIEC",
+      "name": "akiec",
+      "precision": 0.2973,
+      "recall": 0.2558,
+      "specificity": 0.9823,
+      "f1Score": 0.275,
+      "support": 43,
+      "tp": 11,
+      "fp": 26,
+      "fn": 32,
+      "tn": 1443
+    },
+    {
+      "classId": "vasc",
+      "code": "VASC",
+      "name": "vasc",
+      "precision": 1.0,
+      "recall": 0.0286,
+      "specificity": 1.0,
+      "f1Score": 0.0556,
+      "support": 35,
+      "tp": 1,
+      "fp": 0,
+      "fn": 34,
+      "tn": 1477
+    },
+    {
+      "classId": "df",
+      "code": "DF",
+      "name": "df",
+      "precision": 0.0,
+      "recall": 0.0,
+      "specificity": 1.0,
+      "f1Score": 0.0,
+      "support": 44,
+      "tp": 0,
+      "fp": 0,
+      "fn": 44,
+      "tn": 1468
+    }
+  ],
+  "confusionMatrix": [
+    [
+      861,
+      36,
+      5,
+      4,
+      3,
+      0,
+      0
+    ],
+    [
+      119,
+      42,
+      7,
+      0,
+      3,
+      0,
+      0
+    ],
+    [
+      147,
+      25,
+      33,
+      6,
+      6,
+      0,
+      0
+    ],
+    [
+      62,
+      7,
+      2,
+      14,
+      8,
+      0,
+      0
+    ],
+    [
+      25,
+      5,
+      0,
+      2,
+      11,
+      0,
+      0
+    ],
+    [
+      30,
+      2,
+      0,
+      0,
+      2,
+      1,
+      0
+    ],
+    [
+      36,
+      1,
+      0,
+      3,
+      4,
+      0,
+      0
+    ]
+  ]
+}

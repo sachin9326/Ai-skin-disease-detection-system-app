@@ -14,7 +14,8 @@ import SettingsModal from './components/SettingsModal';
 import AuthModal from './components/AuthModal';
 import { getScanHistory, setScanHistory, saveScanToHistory, getAppSettings } from './utils/storage';
 import { getCurrentUser, logout as authLogout, fetchUserScansRemote } from './utils/auth';
-import { ShieldCheck, Activity, Camera, History, MapPin, CheckCircle2, Stethoscope, BarChart3 } from 'lucide-react';
+import { analyzeSkinImageLocally } from './utils/skinClassifier';
+import { Activity, Camera, History, MapPin, CheckCircle2, Stethoscope, BarChart3 } from 'lucide-react';
 import './App.css';
 
 export default function App() {
@@ -130,66 +131,11 @@ export default function App() {
         throw new Error('Invalid analysis response format');
       }
     } catch (err) {
-      console.warn('Backend API connection note (using client CDSS fallback):', err.message);
-      setAnalysisResult({
-        primaryCondition: "Atopic Dermatitis (Eczema)",
-        confidence: 88,
-        severity: "Mid",
-        severityScore: 6,
-        explanation: "Analysis reveals dry, erythematous maculopapular patches with mild scaling and localized surface irritation. Features align closely with subacute atopic eczema.",
-        visualObservations: {
-          color: "Erythematous (Redness)",
-          texture: "Dry & Scaly",
-          borders: "Irregular, diffuse margins",
-          inflammation: "Moderate",
-          lesionType: "Erythematous Patch"
-        },
-        triage: {
-          level: "Routine Consultation",
-          score: 2,
-          redFlags: [],
-          escalationReason: "Mild to moderate eczema presentation manageable with primary outpatient consultation."
-        },
-        uncertaintySystem: { isUncertain: false, oodDetected: false },
-        abcdeAnalysis: {
-          asymmetry: "Non-pigmented inflammatory patch",
-          border: "Diffuse margins",
-          color: "Erythematous pinkish-red",
-          diameter: "> 20mm diffuse",
-          evolution: "Flaring pattern reported",
-          riskSummary: "Low visual pigmentary risk criteria."
-        },
-        differentialDiagnoses: [
-          {
-            name: "Atopic Dermatitis (Eczema)",
-            confidence: 88,
-            description: "Pruritic inflammatory skin disease.",
-            supportingFeatures: ["Erythema with scaling", "Pruritus"],
-            unfittingFeatures: ["Absence of defined ring margin"],
-            distinguishingFactors: "Diffuse borders distinguish eczema from tinea corporis."
-          },
-          {
-            name: "Contact Dermatitis",
-            confidence: 62,
-            description: "Cutaneous inflammatory reaction.",
-            supportingFeatures: ["Localized red rash"],
-            unfittingFeatures: ["No clear linear contact boundary"],
-            distinguishingFactors: "Contact dermatitis follows precise allergen boundary lines."
-          }
-        ],
-        medicationSafety: {
-          warnings: ["Avoid prolonged hydrocortisone use beyond 7 days without doctor advice."],
-          safeGeneralAdvice: ["Apply fragrance-free ceramide cream 3x daily."],
-          contraindications: []
-        },
-        recommendations: [
-          "Apply fragrance-free moisturizing cream 2-3 times daily.",
-          "Avoid hot water showers, harsh soaps, and synthetic fabrics.",
-          "Consult a dermatologist if itching persists or skin cracks."
-        ],
-        disclaimer: "SkinScan AI CDSS: Automated screening report for clinical decision support. Consult a dermatologist."
-      });
+      console.warn('Backend API connection note (using client pixel CDSS feature analyzer):', err.message);
+      const localResult = await analyzeSkinImageLocally(targetImage, symptoms || patientSymptoms);
+      setAnalysisResult(localResult);
     } finally {
+
       setIsLoading(false);
       setWorkflowStep('results');
     }
@@ -239,8 +185,8 @@ export default function App() {
 
       {/* Floating Notification Toast */}
       {toastMessage && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-emerald-950/90 border border-emerald-500/60 text-emerald-200 px-4 py-2 rounded-full text-xs font-bold shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white border border-emerald-400 px-4 py-2 rounded-full text-xs font-bold shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="w-4 h-4 text-white" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -317,11 +263,11 @@ export default function App() {
       </main>
 
       {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden sticky bottom-0 z-30 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 px-4 py-2 flex items-center justify-around">
+      <div className="md:hidden sticky bottom-0 z-30 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800/80 px-4 py-2 flex items-center justify-around shadow-2xl">
         <button
           onClick={() => setActiveTab('scan')}
-          className={`flex flex-col items-center gap-1 text-[11px] font-medium transition-colors ${
-            activeTab === 'scan' ? 'text-cyan-400 font-bold' : 'text-slate-400'
+          className={`flex flex-col items-center gap-1 text-[11px] font-bold transition-colors ${
+            activeTab === 'scan' ? 'text-cyan-400' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <Camera className="w-5 h-5" />
@@ -330,8 +276,8 @@ export default function App() {
 
         <button
           onClick={() => setActiveTab('history')}
-          className={`flex flex-col items-center gap-1 text-[11px] font-medium relative transition-colors ${
-            activeTab === 'history' ? 'text-cyan-400 font-bold' : 'text-slate-400'
+          className={`flex flex-col items-center gap-1 text-[11px] font-bold relative transition-colors ${
+            activeTab === 'history' ? 'text-cyan-400' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <History className="w-5 h-5" />
@@ -340,35 +286,24 @@ export default function App() {
 
         <button
           onClick={() => setActiveTab('doctor_dashboard')}
-          className={`flex flex-col items-center gap-1 text-[11px] font-medium transition-colors ${
-            activeTab === 'doctor_dashboard' ? 'text-teal-400 font-bold' : 'text-slate-400'
+          className={`flex flex-col items-center gap-1 text-[11px] font-bold transition-colors ${
+            activeTab === 'doctor_dashboard' ? 'text-cyan-400' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Stethoscope className="w-5 h-5 text-teal-400" />
+          <Stethoscope className="w-5 h-5 text-cyan-400" />
           <span>Doctor</span>
         </button>
 
         <button
           onClick={() => setActiveTab('admin_dashboard')}
-          className={`flex flex-col items-center gap-1 text-[11px] font-medium transition-colors ${
-            activeTab === 'admin_dashboard' ? 'text-cyan-400 font-bold' : 'text-slate-400'
+          className={`flex flex-col items-center gap-1 text-[11px] font-bold transition-colors ${
+            activeTab === 'admin_dashboard' ? 'text-cyan-400' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <BarChart3 className="w-5 h-5" />
           <span>Admin</span>
         </button>
       </div>
-
-      {/* Footer */}
-      <footer className="w-full py-4 text-center text-xs text-slate-500 border-t border-slate-900 bg-slate-950/60">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>© 2026 SkinScan AI • Safety-Focused Dermatology Screening & CDSS</span>
-          <div className="flex items-center gap-1.5 text-[11px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-            <span>Clinical Decision Support System</span>
-          </div>
-        </div>
-      </footer>
 
       {/* Settings Modal */}
       <SettingsModal
