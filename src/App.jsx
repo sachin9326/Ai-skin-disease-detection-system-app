@@ -354,9 +354,6 @@ export default function App() {
             <span>All Clinical AI Rights Reserved</span>
           </div>
         </div>
-        <p className="max-w-6xl mx-auto text-[10px] text-slate-600 text-center mt-2">
-          SkinScan AI is a Clinical Decision Support System designed for observational triage & preliminary skin surface evaluation. Not a substitute for certified medical diagnosis.
-        </p>
       </footer>
 
     </div>
