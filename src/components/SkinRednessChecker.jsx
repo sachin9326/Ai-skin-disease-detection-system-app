@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getConfidenceTextColor } from '../utils/confidenceColor';
 import { Camera, AlertTriangle, CheckCircle, RotateCcw, Info, Sparkles } from 'lucide-react';
 
 export default function SkinRednessChecker() {
@@ -108,10 +109,10 @@ export default function SkinRednessChecker() {
         redMarkPixelCount,
         percentage: (redRatio * 100).toFixed(1),
         message: isAcnePattern
-          ? `🔴 Acne Vulgaris / Papular Eruption ("Dana Dana" Pattern Detected)`
+          ? `🔴 Acne Vulgaris / Papular Eruption (Papular Pattern Detected)`
           : isRedDetected
           ? '🔴 Red Mark / Erythema Detected on Skin'
-          : '✅ Healthy & Normal Skin Detected (No Red Mark or Rash Found)',
+          : '✅ Healthy & Normal Skin Surface (No Erythema or Papular Lesions Detected)',
       });
       setIsAnalyzing(false);
     }, 400);
@@ -129,13 +130,13 @@ export default function SkinRednessChecker() {
         <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold mb-3">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Real-time Color & Dana Pattern Analysis</span>
+          <span>Real-time Color & Papular Pattern Analysis</span>
         </div>
         <h1 className="text-2xl font-black text-slate-100 flex items-center justify-center gap-2">
-          🖐️ Skin Redness & Acne "Dana Dana" Checker
+          🔬 Erythema & Papular Acne Analyzer
         </h1>
         <p className="text-xs text-slate-400 max-w-md mx-auto mt-2">
-          Upload a photo of your skin. The algorithm detects red marks, rashes, and papular dot patterns ("dana dana") with instant match confidence & treatments.
+          Upload a skin photo. The algorithm detects erythema (redness), rashes, and papular dot patterns with instant match confidence & clinical guidance.
         </p>
       </div>
 
@@ -147,7 +148,7 @@ export default function SkinRednessChecker() {
               <Camera className="w-8 h-8 stroke-[2]" />
             </div>
             <span className="text-sm font-bold text-slate-200 group-hover:text-rose-300">
-              📷 Photo yahan click karke upload karo
+              📷 Click or drag to upload skin image
             </span>
             <span className="text-xs text-slate-500 mt-1">Supports JPG, PNG, WEBP</span>
             <input
@@ -178,7 +179,7 @@ export default function SkinRednessChecker() {
 
             {isAnalyzing && (
               <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 text-center animate-pulse">
-                <p className="text-xs font-bold text-cyan-400">Scanning skin matrix & checking papular dot ("dana dana") patterns...</p>
+                <p className="text-xs font-bold text-cyan-400">Scanning skin matrix & evaluating papular lesion patterns...</p>
               </div>
             )}
 
@@ -205,7 +206,7 @@ export default function SkinRednessChecker() {
                     <h3 className="font-bold text-base">{result.message}</h3>
                     {result.isAcnePattern ? (
                       <p className="text-xs opacity-90 mt-1 font-semibold text-rose-300">
-                        🎯 Match Confidence: <strong>{result.acneConfidence}% Acne Vulgaris / Folliculitis</strong>
+                        🎯 Match Confidence: <strong className={getConfidenceTextColor(result.acneConfidence)}>{result.acneConfidence}% Acne Vulgaris / Folliculitis</strong>
                       </p>
                     ) : (
                       <p className="text-xs opacity-80 mt-0.5">
@@ -228,7 +229,7 @@ export default function SkinRednessChecker() {
                     </span>
                   </div>
                   <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
-                    <span className="text-slate-400 block text-[11px]">Dana Dot Peaks</span>
+                    <span className="text-slate-400 block text-[11px]">Papular Dot Peaks</span>
                     <span className={`text-sm font-extrabold ${result.isAcnePattern ? 'text-amber-400' : 'text-slate-300'}`}>
                       {result.papuleDotCount}
                     </span>
@@ -239,7 +240,7 @@ export default function SkinRednessChecker() {
                 {result.isAcnePattern && (
                   <div className="bg-slate-950/80 border border-amber-500/30 rounded-2xl p-5 text-left space-y-3">
                     <h4 className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                      💡 Clinical Care & Treatment Solutions for Acne / Dana Bumps
+                      💡 Clinical Guidance & Treatment Solutions for Acne / Papular Lesions
                     </h4>
                     <ul className="text-xs text-slate-300 space-y-2 leading-relaxed">
                       <li className="flex items-start gap-2">
@@ -256,7 +257,7 @@ export default function SkinRednessChecker() {
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-rose-400 font-bold shrink-0">4. ⚠️ Precaution:</span>
-                        <span>"Dana / Pimples" ko squeeze ya pop mat karein! Scrubbing se bachein taaki marks aur dark spots na banein.</span>
+                        <span>Avoid squeezing or picking acne lesions to prevent post-inflammatory hyperpigmentation and scarring.</span>
                       </li>
                     </ul>
                   </div>
@@ -270,8 +271,8 @@ export default function SkinRednessChecker() {
       {/* Medical Disclaimer */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex gap-3 text-xs text-slate-400">
         <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-        <p className="leading-relaxed">
-          <strong>Note:</strong> Yeh ek color-analysis algorithm hai, final medical diagnosis nahi hai. Agar skin me koi real problem, rash, burn ya infection lag rahi ho to doctor se zaroor consult karein.
+        <p className="leading-relaxed text-left">
+          <strong>Clinical Disclaimer:</strong> This algorithmic color and pattern analysis tool provides preliminary observational screening and does not constitute a definitive medical diagnosis. If you suspect an infection, severe rash, or abnormal lesion, please consult a certified dermatologist.
         </p>
       </div>
     </div>

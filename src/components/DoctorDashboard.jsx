@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getConfidenceTextColor } from '../utils/confidenceColor';
 import { Stethoscope, CheckCircle2, XCircle, AlertTriangle, ArrowRight, ShieldCheck, FileText, User, RefreshCw, Send, Check } from 'lucide-react';
 
 export default function DoctorDashboard({ currentUser }) {
@@ -155,7 +156,7 @@ export default function DoctorDashboard({ currentUser }) {
                       </h4>
 
                       <div className="flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Confidence: {item.confidence}%</span>
+                        <span className={`font-semibold ${getConfidenceTextColor(item.confidence)}`}>Confidence: {item.confidence}%</span>
                         <span className={`font-semibold ${
                           item.clinicianStatus === 'Approved' ? 'text-emerald-400' :
                           item.clinicianStatus === 'Modified' ? 'text-amber-400' : 'text-slate-400'

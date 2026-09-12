@@ -111,40 +111,45 @@ export default function App() {
   // Execute AI Vision & Context Analysis
   const handleStartAnalysis = async () => {
     if (!currentImage) {
-      console.error("Koi image select nahi ki gayi hai.");
+      console.error("No image selected.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // 1. Agar image Base64 string hai toh Blob banayein, agar File object hai toh direct use karein
+      // 1. Convert Base64 image string to Blob if required, otherwise use File object directly
       const imageBlob = typeof currentImage === 'string' && currentImage.startsWith('data:')
         ? dataURLtoBlob(currentImage)
         : currentImage;
 
-      // 2. FastAPI multipart/form-data payload prepare karein
+      // 2. Prepare FastAPI multipart/form-data payload
       const formData = new FormData();
       formData.append("file", imageBlob, "scan.jpg");
 
-      // 3. FastAPI backend par request send karein
-      const response = await fetch("http://localhost:8000/predict", {
+      // 3. Send prediction request to FastAPI backend
+      const res = await fetch("http://localhost:8000/predict", {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+      if (!res.ok) {
+        throw new Error(`API error: ${res.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await res.json();
 
-      // 4. AnalysisView ke liye state set karein aur view switch karein
+      if (data.valid === false) {
+        alert(data.message);
+        setIsLoading(false);
+        return;
+      }
+
       setAnalysisResult(data);
       setWorkflowStep('results');
     } catch (error) {
       console.error("Prediction analysis failed:", error);
-      alert("Analysis request fail ho gayi. Make sure FastAPI server port 8000 par active hai.");
+      alert("Analysis request failed. Please ensure the FastAPI server is running on port 8000.");
     } finally {
       setIsLoading(false);
     }
@@ -331,6 +336,28 @@ export default function App() {
         onClose={() => setIsAuthOpen(false)}
         onAuthSuccess={handleAuthSuccess}
       />
+
+      {/* Production Clinical Footer */}
+      <footer className="w-full border-t border-slate-800/80 bg-slate-950/95 py-4 px-6 text-xs text-slate-500 mt-auto text-center">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-3 text-slate-400">
+          <div className="flex items-center justify-center gap-2 shrink-0">
+            <img 
+              src="/ai_skin_disease_detector_icon_S_512x512.png" 
+              alt="SkinScan Logo" 
+              className="w-5 h-5 rounded-lg object-cover border border-cyan-500/40"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-slate-400 text-center">
+            <span>Engineered by Sachin Kumar , Saif Sayyed , Priyanshu Duratkar , Bhushan Nagdeve , Sanmay Gurudeo</span>
+            <span className="hidden sm:inline text-slate-600">•</span>
+            <span>All Clinical AI Rights Reserved</span>
+          </div>
+        </div>
+        <p className="max-w-6xl mx-auto text-[10px] text-slate-600 text-center mt-2">
+          SkinScan AI is a Clinical Decision Support System designed for observational triage & preliminary skin surface evaluation. Not a substitute for certified medical diagnosis.
+        </p>
+      </footer>
 
     </div>
   );

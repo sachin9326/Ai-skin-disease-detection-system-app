@@ -27,12 +27,13 @@ export default function Header({
           className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer"
           title="Return to Home / New Screening"
         >
-          <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-600 text-slate-950 shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition-all">
-            <Activity className="w-6 h-6 stroke-[2.5]" />
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-teal-400 border-2 border-slate-950"></span>
-            </span>
+          <div className="relative group/logo flex items-center justify-center shrink-0">
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-500 rounded-2xl blur-md opacity-70 group-hover:opacity-100 transition duration-300"></div>
+            <img
+              src="/ai_skin_disease_detector_icon_S_512x512.png"
+              alt="SkinScan Shield Logo"
+              className="relative w-11 h-11 rounded-2xl object-cover brightness-130 contrast-115 shadow-[0_0_20px_rgba(6,182,212,0.7)] border border-cyan-300/60 group-hover:scale-105 transition-all"
+            />
           </div>
           <div className="hidden sm:block">
             <div className="flex items-center gap-2">

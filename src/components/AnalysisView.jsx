@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LesionSegmentation from './LesionSegmentation';
+import { getConfidenceBadgeStyle, getConfidenceTextColor, getConfidenceBarColor } from '../utils/confidenceColor';
 import { 
   Activity, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, 
   MapPin, BookmarkCheck, Share2, ArrowLeft, Info, Stethoscope, FileText,
@@ -330,7 +331,7 @@ export default function AnalysisView({
 
           <div className="md:col-span-8 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-black bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 shadow-xs">
+              <span className={`px-3 py-1 rounded-full text-xs font-black border shadow-xs transition-colors ${getConfidenceBadgeStyle(confidence)}`}>
                 Confidence: {confidence}%
               </span>
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-200 border border-slate-700 shadow-xs">
@@ -422,7 +423,7 @@ export default function AnalysisView({
               <div key={idx} className="space-y-1">
                 <div className="flex justify-between text-xs text-slate-300">
                   <span className="font-medium">{item.disease_name} ({item.severity})</span>
-                  <span className="text-cyan-400 font-bold">{item.confidence}%</span>
+                  <span className={`font-extrabold ${getConfidenceTextColor(item.confidence)}`}>{item.confidence}%</span>
                 </div>
                 <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                   <div
@@ -634,7 +635,7 @@ export default function AnalysisView({
                 <div key={idx} className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black text-slate-100">{item.name}</span>
-                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${getConfidenceBadgeStyle(item.confidence)}`}>
                       {item.confidence}% Match
                     </span>
                   </div>

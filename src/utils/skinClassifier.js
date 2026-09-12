@@ -511,7 +511,7 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
     {
       id: 'acne_vulgaris',
       hamCode: 'AKIEC',
-      name: 'Acne Vulgaris / Papular Eruption (Dana & Pustular Bumps)',
+      name: 'Acne Vulgaris / Papular Eruption (Papular & Pustular Lesions)',
       icd10: 'L70.0',
       snomedCT: '24079001',
       calculateScores: () => {
@@ -523,10 +523,10 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
         return { modelA: Math.min(95, modelA), modelB: Math.min(95, modelB), modelC: Math.min(95, modelC) };
       },
       severity: 'Mid', severityScore: 4,
-      explanation: 'Analysis detected scattered papular bumps ("dana dana" pustular eruptions) characteristic of Papular Acne / Folliculitis with 60-75% clinical confidence.',
+      explanation: 'Analysis detected scattered papular eruptions characteristic of Papular Acne / Folliculitis.',
       visualObservations: {
         color: 'Erythematous papules with papular tip induration',
-        texture: 'Scattered papular bumps ("dana dana" pustular surface roughness)',
+        texture: 'Scattered papular bumps (pustular surface roughness)',
         borders: 'Focal papular boundaries',
         inflammation: 'Moderate (Papulopustular Eruption)',
         lesionType: 'Scattered Inflammatory Papules & Follicular Bumps',
@@ -535,7 +535,7 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
       triage: { level: 'Routine Consultation / Home Care Management', score: 2, redFlags: [], escalationReason: 'Common papular acne eruption manageable with topical salicylic acid & retinoid solutions.' },
       medicationSafety: {
         warnings: [
-          '⚠️ "Dana / Pimples" ko squeeze, pop ya scratch mat karein (scars aur post-inflammatory hyperpigmentation se bachne ke liye).',
+          '⚠️ Avoid squeezing, popping, or scratching papules or acne lesions to prevent post-inflammatory hyperpigmentation and scarring.',
           'Avoid heavy oil-based body lotions or comedogenic moisturizers on affected areas.'
         ],
         safeGeneralAdvice: [
@@ -555,7 +555,7 @@ export async function classifySkinDisease(features, symptoms = {}, cnnResults = 
         '👕 Wear loose, breathable cotton clothes and shower immediately after sweating.',
         '👨‍⚕️ Consult a dermatologist if papules become painful, deep nodular cysts, or do not respond after 3-4 weeks.'
       ],
-      referenceDescriptor: 'Scattered erythematous papules ("dana dana") with papular tip induration.'
+      referenceDescriptor: 'Scattered erythematous papules with papular tip induration.'
     },
 
     {

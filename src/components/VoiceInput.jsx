@@ -12,6 +12,50 @@ export default function VoiceInput({ onTranscriptExtracted }) {
   const [extractedData, setExtractedData] = useState(null);
   const inputRef = useRef(null);
 
+  // Multilingual Voice Samples Dictionary
+  const sampleChipsByLang = {
+    'hi-IN': [
+      { label: '🎙️ "Haath par 1 hafte se khujli hai"', text: 'Mere haath par 1 hafte se khujli ho rahi hai' },
+      { label: '🎙️ "Face par red rash aur jalan hai"', text: 'Face par red rash aur burning sensation hai 3 din se' },
+      { label: '🎙️ "Legs par severe pain & dryness"', text: 'Legs par 2 weeks se dry skin aur severe pain hai' }
+    ],
+    'en-US': [
+      { label: '🎙️ "Severe itching on hand for 1 week"', text: 'I have severe itching on my hand for 1 week' },
+      { label: '🎙️ "Red rash and burning on face for 3 days"', text: 'Red rash and burning sensation on face for 3 days' },
+      { label: '🎙️ "Severe pain & dryness on legs for 2 weeks"', text: 'Dry skin and severe pain on legs for 2 weeks' }
+    ],
+    'mr-IN': [
+      { label: '🎙️ "हातावर १ आठवड्यापासून खाज सुटली आहे"', text: 'माझ्या हातावर १ आठवड्यापासून खूप खाज सुटली आहे' },
+      { label: '🎙️ "चेहऱ्यावर लाल पुरळ आणि जळजळ आहे"', text: 'चेहऱ्यावर लाल पुरळ आणि ३ दिवसांपासून जळजळ होत आहे' },
+      { label: '🎙️ "पायांवर २ आठवड्यांपासून वेदना व कोरडेपणा"', text: 'पायांवर २ आठवड्यांपासून खूप वेदना आणि कोरडेपणा आहे' }
+    ],
+    'ta-IN': [
+      { label: '🎙️ "கையில் 1 வாரமாக அரிப்பு உள்ளது"', text: 'எனது கையில் 1 வாரமாக கடுமையான அரிப்பு உள்ளது' },
+      { label: '🎙️ "முகத்தில் சிவந்த தடிப்பு மற்றும் எரிச்சல்"', text: 'முகத்தில் சிவந்த தடிப்பு மற்றும் 3 நாட்களாக எரிச்சல் உள்ளது' },
+      { label: '🎙️ "கால்களில் 2 வாரமாக வலி மற்றும் வறட்சி"', text: 'கால்களில் 2 வாரமாக கடுமையான வலி மற்றும் வறட்சி உள்ளது' }
+    ],
+    'bn-IN': [
+      { label: '🎙️ "হাতে ১ সপ্তাহ ধরে চুলকানি হচ্ছে"', text: 'আমার হাতে ১ সপ্তাহ ধরে ভীষণ চুলকানি হচ্ছে' },
+      { label: '🎙️ "মুখে লাল ফুসকুড়ি এবং জ্বালা আছে"', text: 'মুখে লাল ফুসকুড়ি এবং ৩ দিন ধরে জ্বালা করছে' },
+      { label: '🎙️ "পায়ে ২ সপ্তাহ ধরে তীব্র ব্যথা ও শুষ্কতা"', text: 'পায়ে ২ সপ্তাহ ধরে তীব্র ব্যথা এবং শুষ্কতা রয়েছে' }
+    ],
+    'te-IN': [
+      { label: '🎙️ "చేతిపై 1 వారంగా దురదగా ఉంది"', text: 'నా చేతిపై 1 వారంగా తీవ్రమైన దురదగా ఉంది' },
+      { label: '🎙️ "ముఖంపై ఎర్రటి మచ్చలు మరియు మంట"', text: 'ముఖంపై ఎర్రటి మచ్చలు మరియు 3 రోజులుగా మంటగా ఉంది' },
+      { label: '🎙️ "కాళ్ళపై 2 వారాలుగా నొప్పి మరియు పొడిబారడం"', text: 'కాళ్ళపై 2 వారాలుగా తీవ్రమైన నొప్పి మరియు పొడిబారడం ఉంది' }
+    ]
+  };
+
+  // Dynamic placeholders per language
+  const placeholdersByLang = {
+    'hi-IN': 'Tap mic button or type your symptoms here (Hindi / Hinglish)...',
+    'en-US': 'Tap mic button or type your symptoms here in English...',
+    'mr-IN': 'मायक्रोफोन टॅप करा किंवा लक्षणे टाइप करा (मराठी)...',
+    'ta-IN': 'மைக் பட்டனை தட்டவும் அல்லது அறிகுறிகளை தட்டச்சு செய்யவும் (தமிழ்)...',
+    'bn-IN': 'মাইক্রোফোন ট্যাপ করুন বা উপসর্গ লিখুন (বাংলা)...',
+    'te-IN': 'మైక్ బటన్ నొక్కండి లేదా మీ లక్షణాలను టైప్ చేయండి (తెలుగు)...'
+  };
+
   // Advanced NLP Multilingual Parser for Skin Symptoms
   const parseSymptomsNLP = (text) => {
     if (!text || !text.trim()) return null;
@@ -27,38 +71,38 @@ export default function VoiceInput({ onTranscriptExtracted }) {
       rawNote: text.trim()
     };
 
-    // Body location detection (Hindi, Hinglish, Marathi, Tamil, English)
-    if (/haath|hath|hand|arm|baju|finger|kandhe|shoulder|wrist|forearm/.test(lower)) {
+    // Body location detection (Hindi, Hinglish, Marathi, Tamil, Bengali, Telugu, English)
+    if (/haath|hath|hand|arm|baju|finger|kandhe|shoulder|wrist|forearm|हात|हातावर|கை|கையில்|হাত|হাতে|చేతి|చేతిపై/.test(lower)) {
       extracted.bodyLocation = 'Arm / Hand';
-    } else if (/pair|pao|paon|leg|foot|feet|tang|thigh|knee|ankle/.test(lower)) {
+    } else if (/pair|pao|paon|leg|foot|feet|tang|thigh|knee|ankle|पाय|पायांवर|கா|கால்களில்|পা|পায়ে|కాలు|కాళ్ళపై/.test(lower)) {
       extracted.bodyLocation = 'Leg / Foot';
-    } else if (/chehra|face|gardan|head|sar|sir|muh|gal|forehead|chin|neck/.test(lower)) {
+    } else if (/chehra|face|gardan|head|sar|sir|muh|gal|forehead|chin|neck|चेहरा|चेहऱ्यावर|முகம்|முகத்தில்|মুখ|মুখে|ముఖం|ముఖంపై/.test(lower)) {
       extracted.bodyLocation = 'Face / Neck';
-    } else if (/peth|piith|back|chest|chhati|pet|stomach|abdomen|torso/.test(lower)) {
+    } else if (/peth|piith|back|chest|chhati|pet|stomach|abdomen|torso|पाठ|छाती|முதுகு|বুক|వెన్ను/.test(lower)) {
       extracted.bodyLocation = 'Torso / Back / Chest';
-    } else if (/scalp|baal|khopdi/.test(lower)) {
+    } else if (/scalp|baal|khopdi|डोके|தலை|মাথা|తల/.test(lower)) {
       extracted.bodyLocation = 'Scalp';
-    } else if (/poore|widespread|multiple|body|sab jagah/.test(lower)) {
+    } else if (/poore|widespread|multiple|body|sab jagah|सर्व|முழு|সব|అన్ని/.test(lower)) {
       extracted.bodyLocation = 'Widespread / Multiple Body Sites';
     }
 
     // Symptom indicators
-    if (/khujli|khujal|khaj|itch|itching|pruritus/.test(lower)) extracted.itching = true;
-    if (/dard|dukh|dukhana|pain|pida|sore|tenderness|painful/.test(lower)) extracted.pain = true;
-    if (/jalan|burn|burning|stinging|jhal/.test(lower)) extracted.burning = true;
-    if (/khoon|bleed|bleeding|blood|ooz/.test(lower)) extracted.bleeding = true;
-    if (/sukhi|dry|dryness|papdi|scaling|chhil|flak|peel|rough/.test(lower)) extracted.scaling = true;
+    if (/khujli|khujal|khaj|itch|itching|pruritus|खाज|अरीप्पु|அரிப்பு|চুলকানি|দুর্দ|దురద/.test(lower)) extracted.itching = true;
+    if (/dard|dukh|dukhana|pain|pida|sore|tenderness|painful|वेदना|दुखणे|வலி|ব্যথা|నొప్పి/.test(lower)) extracted.pain = true;
+    if (/jalan|burn|burning|stinging|jhal|जळजळ|எரிச்சல்|জ্বালা|మంట/.test(lower)) extracted.burning = true;
+    if (/khoon|bleed|bleeding|blood|ooz|रक्त|இரத்தம்|রক্ত|రక్తం/.test(lower)) extracted.bleeding = true;
+    if (/sukhi|dry|dryness|papdi|scaling|chhil|flak|peel|rough|कोरडेपणा|வறட்சி|শুষ্কতা|పొడిబారడం/.test(lower)) extracted.scaling = true;
 
     // Duration extraction
-    if (/48 ghante|48 hours|2 din|2 days|aaj|today|cal|yesterday|acute/.test(lower)) {
+    if (/48 ghante|48 hours|2 din|2 days|aaj|today|cal|yesterday|acute|२ दिवस|2 நாட்கள்|২ দিন|2 రోజులు/.test(lower)) {
       extracted.duration = 'Less than 48 hours';
-    } else if (/3 din|4 din|5 din|few days|kuch din|3-7/.test(lower)) {
+    } else if (/3 din|4 din|5 din|few days|kuch din|3-7|३ दिवस|3 days|3 நாட்கள்|৩ দিন|3 రోజులు/.test(lower)) {
       extracted.duration = '3-7 days';
-    } else if (/1 hafte|2 hafte|1 week|2 weeks|hafta|hafte|10 din|10 days|weeks/.test(lower)) {
+    } else if (/1 hafte|2 hafte|1 week|2 weeks|hafta|hafte|10 din|10 days|weeks|आठवडा|आठवड्यापासून|வாரமாக|সপ্তাহ|వారంగా|వారాలు|1 వారంగా|1 வாரமாக|১ সপ্তাহ|१ आठवड्यापासून/.test(lower)) {
       extracted.duration = '1-2 weeks';
-    } else if (/mahina|mahine|month|months|1 month|2 month|3 month/.test(lower)) {
+    } else if (/mahina|mahine|month|months|1 month|2 month|3 month|महिना|மாதம்|মাস|నెల/.test(lower)) {
       extracted.duration = '1-3 months';
-    } else if (/saal|year|years|chronic|purana|long time/.test(lower)) {
+    } else if (/saal|year|years|chronic|purana|long time|वर्ष|ஆண்டு|বছর|సంవత్సరం/.test(lower)) {
       extracted.duration = 'Chronic (> 3 months)';
     }
 
@@ -161,12 +205,8 @@ export default function VoiceInput({ onTranscriptExtracted }) {
     setIsSimulating(true);
     setTranscript('');
     
-    const sampleSentences = [
-      "Mere haath par ek hafte se khujli aur dry skin ho rahi hai",
-      "Face par red rash aur burning sensation hai 3 din se",
-      "Legs par 2 weeks se severe pain aur dryness hai",
-      "Back par 1 mahine se chhakte aur khujli hai"
-    ];
+    const chips = sampleChipsByLang[lang] || sampleChipsByLang['hi-IN'];
+    const sampleSentences = chips.map(chip => chip.text);
     const targetSentence = sampleSentences[Math.floor(Math.random() * sampleSentences.length)];
     
     let currentIndex = 0;
@@ -207,7 +247,7 @@ export default function VoiceInput({ onTranscriptExtracted }) {
     if (parsed.duration) speechText += `Duration: ${parsed.duration}.`;
 
     const utterance = new SpeechSynthesisUtterance(speechText);
-    utterance.lang = lang === 'hi-IN' ? 'hi-IN' : 'en-US';
+    utterance.lang = lang === 'hi-IN' ? 'hi-IN' : (lang || 'en-US');
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
 
@@ -224,11 +264,8 @@ export default function VoiceInput({ onTranscriptExtracted }) {
     }
   };
 
-  const sampleChips = [
-    { label: '🎙️ "Haath par 1 hafte se khujli hai"', text: 'Mere haath par 1 hafte se khujli ho rahi hai' },
-    { label: '🎙️ "Face par red rash aur jalan hai"', text: 'Face par red rash aur burning sensation hai 3 din se' },
-    { label: '🎙️ "Legs par severe pain & dryness"', text: 'Legs par 2 weeks se dry skin aur severe pain hai' }
-  ];
+  const currentSampleChips = sampleChipsByLang[lang] || sampleChipsByLang['hi-IN'];
+  const currentPlaceholder = placeholdersByLang[lang] || placeholdersByLang['hi-IN'];
 
   return (
     <div className="w-full glass-card p-5 rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-slate-900/95 via-slate-950 to-cyan-950/30 space-y-4 text-left shadow-[0_0_35px_rgba(6,182,212,0.15)] relative overflow-hidden transition-all">
@@ -344,7 +381,7 @@ export default function VoiceInput({ onTranscriptExtracted }) {
               type="text"
               value={transcript}
               onChange={(e) => setTranscript(e.target.value)}
-              placeholder={isListening ? "Listening... Speak symptoms in Hindi or English..." : "Tap mic button or type your symptoms here..."}
+              placeholder={isListening ? "Listening... Speak your symptoms..." : currentPlaceholder}
               className="w-full bg-transparent text-cyan-200 font-mono text-xs placeholder:text-slate-500 focus:outline-none leading-relaxed pr-2"
             />
 
@@ -451,7 +488,7 @@ export default function VoiceInput({ onTranscriptExtracted }) {
             <span>Or click a voice sample to test instant parsing:</span>
           </span>
           <div className="flex flex-wrap gap-2">
-            {sampleChips.map((chip, idx) => (
+            {currentSampleChips.map((chip, idx) => (
               <button
                 key={idx}
                 type="button"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getScanHistory, deleteScanFromHistory, clearScanHistory } from '../utils/storage';
+import { getConfidenceBadgeStyle, getConfidenceTextColor } from '../utils/confidenceColor';
 import ImageComparer from './ImageComparer';
 import { History, Trash2, Calendar, Eye, AlertCircle, ArrowLeft, Camera, Sparkles, MapPin, TrendingUp, Sliders } from 'lucide-react';
 
@@ -163,8 +164,8 @@ export default function HistoryView({ onSelectSavedScan, onNewScan, onFindDermat
                   {scan.primaryCondition}
                 </h4>
 
-                <div className="flex items-center justify-between text-xs text-cyan-300 font-medium">
-                  <span>Confidence: {scan.confidence}%</span>
+                <div className="flex items-center justify-between text-xs font-semibold">
+                  <span className={getConfidenceTextColor(scan.confidence)}>Confidence: {scan.confidence}%</span>
 
                   {/* Checkbox for comparison */}
                   <button
@@ -222,7 +223,7 @@ export default function HistoryView({ onSelectSavedScan, onNewScan, onFindDermat
               />
               <div className="space-y-2 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-950 text-cyan-300 border border-cyan-800">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getConfidenceBadgeStyle(selectedScan.confidence)}`}>
                     Confidence: {selectedScan.confidence}%
                   </span>
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-200">
