@@ -22,10 +22,14 @@ export default function AdaptiveQuestionnaire({ onCancel, onSubmitQuestionnaire 
   const handleVoiceData = (extracted) => {
     if (extracted.bodyLocation) setBodyLocation(extracted.bodyLocation);
     if (extracted.duration) setDuration(extracted.duration);
-    if (extracted.itching !== undefined) setItching(extracted.itching ? 'Yes' : 'No');
+    if (extracted.itching !== undefined) {
+      setItching(extracted.itching ? 'Yes' : 'No');
+      if (extracted.itching) setShowAdaptiveFollowUp(true);
+    }
     if (extracted.pain !== undefined) setPain(extracted.pain ? 'Yes' : 'No');
     if (extracted.burning !== undefined) setBurning(extracted.burning ? 'Yes' : 'No');
     if (extracted.bleeding !== undefined) setBleeding(extracted.bleeding ? 'Yes' : 'No');
+    if (extracted.scaling !== undefined) setScaling(extracted.scaling ? 'Yes' : 'No');
     if (extracted.rawNote) {
       setMedicalHistory(prev => prev ? `${prev}. Voice note: ${extracted.rawNote}` : extracted.rawNote);
     }
