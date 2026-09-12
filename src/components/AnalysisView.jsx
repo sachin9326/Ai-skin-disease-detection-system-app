@@ -94,6 +94,8 @@ export default function AnalysisView({
     );
   }
 
+  const analysisResult = analysisData;
+
   const {
     primaryCondition,
     confidence,
@@ -380,17 +382,64 @@ export default function AnalysisView({
 
 
         {/* Observation Summary */}
-        <div className="bg-slate-950/80 rounded-2xl p-4.5 border border-slate-800 space-y-2">
+        <div className="bg-slate-950/80 rounded-2xl p-4.5 border border-slate-800 space-y-3">
           <div className="flex items-center gap-2 text-slate-100 text-sm font-extrabold">
             <Info className="w-4 h-4 text-cyan-400" />
             <span>AI Observation Summary</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
-            {explanation}
-          </p>
+
+          <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-800 space-y-3">
+            <div>
+              <h4 className="text-sm font-semibold text-emerald-400">Clinical Observation</h4>
+              <p className="text-sm text-slate-300">
+                {analysisResult?.observation || "No specific morphological markers identified."}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-semibold text-sky-400">Description</h4>
+              <p className="text-sm text-slate-400">
+                {analysisResult?.description || "Skin lesion analysis complete."}
+              </p>
+            </div>
+
+            <div className="pt-2 border-t border-slate-800">
+              <h4 className="text-sm font-semibold text-amber-400">Recommended Action</h4>
+              <p className="text-sm text-slate-300">
+                {analysisResult?.recommendation || "Follow up with a licensed medical professional for formal clinical evaluation."}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* ─── MORPHOLOGICAL FEATURE GRID (Step 2 Protocol) ────────────────── */}
+        <div className="mt-6 p-4 bg-slate-900/60 rounded-xl border border-slate-800">
+          <h3 className="text-sm font-semibold text-slate-200 mb-3 uppercase tracking-wider">
+            Top Differential Diagnoses
+          </h3>
+          
+          <div className="space-y-3">
+            {analysisResult?.top_3?.map((item, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between text-xs text-slate-300">
+                  <span className="font-medium">{item.disease_name} ({item.severity})</span>
+                  <span className="text-cyan-400 font-bold">{item.confidence}%</span>
+                </div>
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${
+                      item.severity.includes("Malignant") 
+                        ? "bg-rose-500" 
+                        : item.severity.includes("Precancerous") 
+                        ? "bg-amber-500" 
+                        : "bg-cyan-500"
+                    }`}
+                    style={{ width: `${item.confidence}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
         {morphological_features && (
           <div className="space-y-3 animate-in fade-in duration-300">
             <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-2">

@@ -19,6 +19,18 @@ import { analyzeSkinImageLocally } from './utils/skinClassifier';
 import { Activity, Camera, History, MapPin, CheckCircle2, Stethoscope, BarChart3 } from 'lucide-react';
 import './App.css';
 
+const dataURLtoBlob = (dataurl) => {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('scan'); // 'scan' | 'history' | 'locator' | 'doctor_dashboard' | 'admin_dashboard'
   const [workflowStep, setWorkflowStep] = useState('capture'); // 'capture' | 'quality_check' | 'preprocessing' | 'questionnaire' | 'analyzing' | 'results'
@@ -93,72 +105,51 @@ export default function App() {
   // Submit Questionnaire & Start AI Analysis
   const handleQuestionnaireSubmit = async (symptomsPayload) => {
     setPatientSymptoms(symptomsPayload);
-    handleStartAnalysis(currentImage, symptomsPayload);
+    handleStartAnalysis();
   };
 
   // Execute AI Vision & Context Analysis
-  const handleStartAnalysis = async (imageToAnalyze, symptoms) => {
-    const targetImage = imageToAnalyze || currentImage;
-    if (!targetImage) return;
+  const handleStartAnalysis = async () => {
+    if (!currentImage) {
+      console.error("Koi image select nahi ki gayi hai.");
+      return;
+    }
 
-    setWorkflowStep('analyzing');
     setIsLoading(true);
-    setAnalysisResult(null);
-    setIsSaved(false);
 
     try {
-      const settings = getAppSettings();
-      
-      const response = await fetch('/api/analyze-skin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          image: targetImage,
-          provider: settings.provider,
-          apiKey: settings.apiKey,
-          model: settings.model,
-          symptoms: symptoms || patientSymptoms
-        })
+      // 1. Agar image Base64 string hai toh Blob banayein, agar File object hai toh direct use karein
+      const imageBlob = typeof currentImage === 'string' && currentImage.startsWith('data:')
+        ? dataURLtoBlob(currentImage)
+        : currentImage;
+
+      // 2. FastAPI multipart/form-data payload prepare karein
+      const formData = new FormData();
+      formData.append("file", imageBlob, "scan.jpg");
+
+      // 3. FastAPI backend par request send karein
+      const response = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        body: formData,
       });
 
       if (!response.ok) {
-        throw new Error(`API response status ${response.status}`);
+        throw new Error(`API error: ${response.statusText}`);
       }
 
-      const resData = await response.json();
-      if (resData.success && resData.data) {
-        setAnalysisResult(resData.data);
-      } else {
-        throw new Error('Invalid analysis response format');
-      }
-    } catch (err) {
-      console.warn('Backend API connection note (using client pixel CDSS feature analyzer):', err.message);
-      try {
-        const localResult = await analyzeSkinImageLocally(targetImage, symptoms || patientSymptoms);
-        setAnalysisResult(localResult);
-      } catch (localErr) {
-        console.error('Local analysis execution error:', localErr);
-        // Fail-safe analysis result to guarantee screen is never blank
-        setAnalysisResult({
-          primaryCondition: "Skin Image Analysis Complete",
-          confidence: 65,
-          severity: "Mid",
-          explanation: "Automated pixel matrix feature extraction completed. Review visual features or consult a dermatologist for detailed evaluation.",
-          triage: { level: "Routine Consultation", score: 2, redFlags: [], escalationReason: "Outpatient dermatological assessment recommended." },
-          uncertaintySystem: { isUncertain: false, reason: "" },
-          recommendations: [
-            "Wash affected area with mild fragrance-free cleanser.",
-            "Keep skin dry and moisturized with non-comedogenic lotion.",
-            "Schedule a dermatologist consultation if symptoms persist."
-          ],
-          disclaimer: "SkinScan AI Clinical Decision Support System: Automated feature evaluation."
-        });
-      }
+      const data = await response.json();
+
+      // 4. AnalysisView ke liye state set karein aur view switch karein
+      setAnalysisResult(data);
+      setWorkflowStep('results');
+    } catch (error) {
+      console.error("Prediction analysis failed:", error);
+      alert("Analysis request fail ho gayi. Make sure FastAPI server port 8000 par active hai.");
     } finally {
       setIsLoading(false);
-      setWorkflowStep('results');
     }
   };
+
 
   const handleSaveCurrentScan = () => {
     if (!analysisResult || !currentImage) return;
