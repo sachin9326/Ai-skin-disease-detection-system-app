@@ -3,7 +3,8 @@ import LesionSegmentation from './LesionSegmentation';
 import { 
   Activity, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, 
   MapPin, BookmarkCheck, Share2, ArrowLeft, Info, Stethoscope, FileText,
-  AlertCircle, ShieldCheck, Flame, Layers, Download, Check, Clock
+  AlertCircle, ShieldCheck, Flame, Layers, Download, Check, Clock,
+  Eye, Microscope, Zap, TrendingUp, BarChart2, Siren
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -106,7 +107,13 @@ export default function AnalysisView({
     medicationSafety = {},
     recommendations = [],
     modelMetadata = {},
-    disclaimer
+    disclaimer,
+    // ── New expert protocol fields ──────────────────────────────────────────
+    image_quality,
+    morphological_features,
+    malignancy_risk,
+    recommended_clinical_action,
+    primary_diagnosis,
   } = analysisData;
 
   // Triage configuration styling
@@ -145,6 +152,23 @@ export default function AnalysisView({
 
   const triageStyle = triageConfig[triage.level] || triageConfig['Routine Consultation'];
 
+  // ── Malignancy Risk Meter config ─────────────────────────────────────
+  const malignancyConfig = {
+    'Benign':           { color: 'text-emerald-300', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', bar: 'bg-emerald-500', fill: 10, icon: ShieldCheck, label: 'Benign' },
+    'Indeterminate':    { color: 'text-amber-300',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   bar: 'bg-amber-400',   fill: 40, icon: AlertCircle,  label: 'Indeterminate' },
+    'Suspicious':       { color: 'text-orange-300',  bg: 'bg-orange-500/10',  border: 'border-orange-500/30',  bar: 'bg-orange-500',  fill: 70, icon: AlertTriangle, label: 'Suspicious' },
+    'Highly Suspicious':{ color: 'text-rose-300',    bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    bar: 'bg-rose-500',    fill: 95, icon: Siren,          label: 'Highly Suspicious' },
+  };
+  const riskCfg = malignancyConfig[malignancy_risk] || malignancyConfig['Indeterminate'];
+
+  // ── Clinical action banner config ─────────────────────────────────
+  const actionConfig = {
+    'Routine monitoring':      { color: 'text-emerald-300', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', icon: Activity },
+    'Non-urgent consult':      { color: 'text-sky-300',     bg: 'bg-sky-500/10',     border: 'border-sky-500/30',     icon: Stethoscope },
+    'Urgent dermoscopy/biopsy':{ color: 'text-rose-300',    bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    icon: Zap },
+  };
+  const actionCfg = actionConfig[recommended_clinical_action] || actionConfig['Non-urgent consult'];
+
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col gap-6 p-4 my-2 animate-in fade-in slide-in-from-bottom-4 duration-300">
       
@@ -181,6 +205,45 @@ export default function AnalysisView({
           </button>
         </div>
       </div>
+
+      {/* ─── IMAGE QUALITY BADGE PANEL (Step 1 Protocol) ────────────── */}
+      {image_quality && (
+        <div className="glass-card rounded-2xl border border-slate-800 bg-slate-900/70 p-4 flex flex-wrap gap-3 items-center animate-in fade-in duration-300">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center">
+              <Eye className="w-3.5 h-3.5 text-cyan-400" />
+            </div>
+            <span className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider">Step 1 — Image Integrity</span>
+          </div>
+
+          {/* Clarity badge */}
+          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${
+            image_quality.clarity === 'Adequate' ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' :
+            image_quality.clarity === 'Suboptimal' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' :
+            'bg-rose-500/10 text-rose-300 border-rose-500/30'
+          }`}>
+            Clarity: {image_quality.clarity}
+          </span>
+
+          {/* Fitzpatrick badge */}
+          {image_quality.fitzpatrick_type_estimate && (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-black bg-violet-500/10 text-violet-300 border border-violet-500/30">
+              Fitzpatrick {image_quality.fitzpatrick_type_estimate}
+            </span>
+          )}
+
+          {/* Artifact list */}
+          {image_quality.artifacts_present && image_quality.artifacts_present.length > 0 && image_quality.artifacts_present[0] !== 'none' && (
+            <div className="flex flex-wrap gap-1.5">
+              {image_quality.artifacts_present.map((art, i) => (
+                <span key={i} className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+                  ⚠ {art}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* AI UNCERTAINTY CIRCUIT BREAKER ALERT (If confidence is low / OOD) */}
       {uncertaintySystem.isUncertain && (
@@ -326,6 +389,143 @@ export default function AnalysisView({
             {explanation}
           </p>
         </div>
+
+        {/* ─── MORPHOLOGICAL FEATURE GRID (Step 2 Protocol) ────────────────── */}
+        {morphological_features && (
+          <div className="space-y-3 animate-in fade-in duration-300">
+            <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-2">
+              <Microscope className="w-4 h-4 text-violet-400" />
+              <span>Step 2 — Morphological Deconstruction (ABCDE)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Asymmetry */}
+              <div className="bg-slate-950/80 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+                <span className="text-[10px] font-extrabold text-violet-400 uppercase tracking-wider block">A — Asymmetry</span>
+                <p className="text-xs font-semibold text-slate-200">{morphological_features.asymmetry}</p>
+              </div>
+
+              {/* Border */}
+              <div className="bg-slate-950/80 rounded-2xl p-3.5 border border-slate-800 space-y-1.5">
+                <span className="text-[10px] font-extrabold text-cyan-400 uppercase tracking-wider block">B — Border</span>
+                <p className="text-xs font-semibold text-slate-200">{morphological_features.border_characteristics}</p>
+              </div>
+            </div>
+
+            {/* Color palette chips */}
+            {morphological_features.color_distribution && morphological_features.color_distribution.length > 0 && (
+              <div className="bg-slate-950/80 rounded-2xl p-3.5 border border-slate-800 space-y-2">
+                <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider block">C — Color Distribution</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {morphological_features.color_distribution.map((color, i) => {
+                    const colorMap = {
+                      'red': 'bg-red-500/20 text-red-300 border-red-500/30',
+                      'pink': 'bg-pink-500/20 text-pink-300 border-pink-500/30',
+                      'dark red': 'bg-red-700/20 text-red-400 border-red-600/30',
+                      'brown': 'bg-amber-800/20 text-amber-400 border-amber-700/30',
+                      'dark brown': 'bg-amber-900/30 text-amber-500 border-amber-800/40',
+                      'black': 'bg-slate-700/40 text-slate-200 border-slate-600/40',
+                      'blue-gray': 'bg-blue-900/30 text-blue-300 border-blue-700/30',
+                      'white': 'bg-slate-100/10 text-slate-200 border-slate-400/30',
+                      'silvery-white': 'bg-slate-300/10 text-slate-300 border-slate-400/30',
+                      'tan': 'bg-yellow-700/20 text-yellow-400 border-yellow-600/30',
+                    };
+                    const cls = colorMap[color.toLowerCase()] || 'bg-slate-800 text-slate-300 border-slate-700';
+                    return (
+                      <span key={i} className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border capitalize ${cls}`}>
+                        {color}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Dermoscopic structures */}
+            {morphological_features.dermoscopic_structures && morphological_features.dermoscopic_structures.length > 0 && (
+              <div className="bg-slate-950/80 rounded-2xl p-3.5 border border-slate-800 space-y-2">
+                <span className="text-[10px] font-extrabold text-teal-400 uppercase tracking-wider block">D — Dermoscopic Structures</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {morphological_features.dermoscopic_structures.map((struct, i) => (
+                    <span key={i} className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-300 border border-teal-500/30 capitalize">
+                      {struct}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── MALIGNANCY RISK METER + CLINICAL ACTION BANNER (Steps 3 & 4) ─── */}
+        {malignancy_risk && (
+          <div className="space-y-3 animate-in fade-in duration-300">
+
+            {/* Malignancy Risk Meter */}
+            <div className={`rounded-2xl p-4 border ${riskCfg.bg} ${riskCfg.border} space-y-3`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-xl ${riskCfg.bg} border ${riskCfg.border} flex items-center justify-center`}>
+                    <riskCfg.icon className={`w-4 h-4 ${riskCfg.color}`} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Step 3 — Malignancy Risk Assessment</span>
+                    <span className={`text-sm font-black ${riskCfg.color}`}>{malignancy_risk}</span>
+                  </div>
+                </div>
+                <span className={`text-[10px] font-mono font-extrabold px-2.5 py-1 rounded-full border ${riskCfg.bg} ${riskCfg.color} ${riskCfg.border}`}>
+                  {riskCfg.fill}% Risk Index
+                </span>
+              </div>
+
+              {/* Risk bar */}
+              <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${riskCfg.bar} transition-all duration-700`}
+                  style={{ width: `${riskCfg.fill}%` }}
+                />
+              </div>
+
+              <div className="flex items-center gap-2 text-[11px] text-slate-400 font-semibold">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div><span>Benign</span>
+                </div>
+                <div className="flex-1 border-t border-dashed border-slate-700"></div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-amber-400"></div><span>Indeterminate</span>
+                </div>
+                <div className="flex-1 border-t border-dashed border-slate-700"></div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-orange-500"></div><span>Suspicious</span>
+                </div>
+                <div className="flex-1 border-t border-dashed border-slate-700"></div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-rose-500"></div><span>Highly Suspicious</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Recommended Clinical Action */}
+            {recommended_clinical_action && (
+              <div className={`rounded-2xl p-4 border ${actionCfg.bg} ${actionCfg.border} flex items-center justify-between gap-4`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl ${actionCfg.bg} border ${actionCfg.border} flex items-center justify-center shrink-0`}>
+                    <actionCfg.icon className={`w-4.5 h-4.5 ${actionCfg.color}`} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Step 4 — Recommended Clinical Action</span>
+                    <span className={`text-sm font-black ${actionCfg.color}`}>{recommended_clinical_action}</span>
+                  </div>
+                </div>
+                {recommended_clinical_action === 'Urgent dermoscopy/biopsy' && (
+                  <span className="px-3 py-1.5 rounded-full text-[10px] font-black bg-rose-600 text-white border border-rose-500 shrink-0 animate-pulse">
+                    URGENT
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Visual Observations Matrix */}
         {visualObservations && Object.keys(visualObservations).length > 0 && (

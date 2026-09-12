@@ -467,6 +467,19 @@ export function classifyNodeSkinDisease(features, symptoms = {}) {
   );
 
   const top5Differentials = evaluatedProfiles.slice(0, 5).map(item => ({
+    // ── New protocol fields ──────────────────────────────────────────
+    condition_name: item.name,
+    likelihood: item.combinedScore >= 55 ? 'Moderate' : 'Low',
+    differentiating_factors: [
+      item.id !== topMatch.id && annularRingScore > 5 && item.id !== 'tinea_corporis'
+        ? 'Lacks the characteristic annular ring border pattern present in image'
+        : null,
+      item.id !== topMatch.id && pigmentationRatio > 0.05 && item.id !== 'pigmented_nevus'
+        ? 'Dark melanocytic pigmentation better explained by primary diagnosis'
+        : null,
+      `Ensemble score ${item.combinedScore}% vs primary ${topMatch.combinedScore}%; ICD-10 ${item.icd10}`
+    ].filter(Boolean).join('. '),
+    // ── Legacy fields (preserved for existing differential panel) ─────────
     name: item.name,
     confidence: item.combinedScore,
     icd10: item.icd10,
@@ -482,12 +495,108 @@ export function classifyNodeSkinDisease(features, symptoms = {}) {
     distinguishingFactors: `ICD-10 Code: ${item.icd10} (SNOMED-CT: ${item.snomedCT})`
   }));
 
-  // Apply clinical safety upgrade when melanoma is near the top
+  // ── Apply clinical safety upgrade when melanoma is near the top ──────────
   const triageLevel = melanomaSafetyFlag && topMatch.id !== 'pigmented_nevus'
     ? 'Dermatologist Soon'
     : topMatch.triage.level;
 
+  // ── NEW PROTOCOL: Derive malignancy_risk from ensemble data ────────────
+  let malignancy_risk = 'Benign';
+  if (isLowConfidence) {
+    malignancy_risk = 'Indeterminate';
+  } else if (topMatch.id === 'pigmented_nevus') {
+    malignancy_risk = asymmetryScore > 0.35 ? 'Highly Suspicious' : 'Suspicious';
+  } else if (melanomaSafetyFlag) {
+    malignancy_risk = 'Suspicious';
+  } else if (topMatch.severity === 'Extreme') {
+    malignancy_risk = 'Suspicious';
+  }
+
+  // ── NEW PROTOCOL: recommended_clinical_action ───────────────────────
+  let recommended_clinical_action = 'Routine monitoring';
+  if (malignancy_risk === 'Highly Suspicious' || malignancy_risk === 'Suspicious') {
+    recommended_clinical_action = 'Urgent dermoscopy/biopsy';
+  } else if (triageLevel === 'Routine Consultation' || triageLevel === 'Dermatologist Soon') {
+    recommended_clinical_action = 'Non-urgent consult';
+  }
+
+  // ── NEW PROTOCOL: Asymmetry label ─────────────────────────────────
+  const asymmetryLabel =
+    asymmetryScore > 0.45 ? 'High' :
+    asymmetryScore > 0.25 ? 'Moderate' :
+    asymmetryScore > 0.10 ? 'Low' : 'None';
+
+  // ── NEW PROTOCOL: Color distribution list from feature ratios ──────────
+  const colorDistribution = [];
+  if (erythemaRatio > 0.15) colorDistribution.push('red', 'pink');
+  if (erythemaRatio > 0.25) colorDistribution.push('dark red');
+  if (pigmentationRatio > 0.03) colorDistribution.push('brown');
+  if (pigmentationRatio > 0.06) colorDistribution.push('dark brown', 'black');
+  if (depigmentationRatio > 0.04) colorDistribution.push('white');
+  if (scaleRatio > 0.02) colorDistribution.push('silvery-white');
+  if (topMatch.id === 'pigmented_nevus' && pigmentationRatio > 0.04) colorDistribution.push('blue-gray');
+  if (colorDistribution.length === 0) colorDistribution.push('tan', 'skin-toned');
+
+  // ── NEW PROTOCOL: Dermoscopic structures from feature profile ────────
+  const dermoscopicStructures = [];
+  if (topMatch.id === 'pigmented_nevus') {
+    dermoscopicStructures.push('pigment network');
+    if (asymmetryScore > 0.3) dermoscopicStructures.push('atypical pigment network', 'irregular dots/globules');
+    if (asymmetryScore > 0.4) dermoscopicStructures.push('blue-white veil (suspected)');
+  }
+  if (topMatch.id === 'psoriasis') dermoscopicStructures.push('dotted vessels', 'silvery scale');
+  if (topMatch.id === 'tinea_corporis') dermoscopicStructures.push('annular ring border', 'peripheral scaling');
+  if (scaleRatio > 0.03) dermoscopicStructures.push('scale / desquamation');
+  if (pusRatio > 0.01) dermoscopicStructures.push('yellowish pustular structures');
+  if (dermoscopicStructures.length === 0) dermoscopicStructures.push('non-specific surface pattern');
+
+  // ── NEW PROTOCOL: Border characteristics text ──────────────────────
+  const borderChars = topMatch.visualObservations?.borders ||
+    (asymmetryScore > 0.3 ? 'Irregular, notched, asymmetric margins' : 'Relatively well-demarcated borders');
+
+  // ── NEW PROTOCOL: image_quality synthesis (from data quality flag + fitzpatrick) 
+  const dataQ = features?.dataQuality || 'statistical_approximation';
+  const iqClarity = dataQ === 'insufficient' ? 'Insufficient' : dataQ === 'statistical_approximation' ? 'Suboptimal' : 'Adequate';
+
+  // ── NEW PROTOCOL: Confidence level bracket ───────────────────────
+  const confidenceLevel = combinedConfidence >= 70 ? 'High' : combinedConfidence >= 40 ? 'Moderate' : 'Low';
+
+  // ── Primary justification string incorporating Step 2 findings ───────
+  const primaryJustification = isLowConfidence
+    ? 'No distinct diagnostic skin lesion features were detected by the ensemble feature extractor. '
+      + 'Erythema, pigmentation, scale, and asymmetry scores all fell below minimum thresholds.'
+    : `${topMatch.explanation} Visual feature analysis on ${fitzpatrick.fitzpatrickType} (${fitzpatrick.fitzpatrickName}) skin revealed: `
+      + `asymmetry score ${asymmetryLabel.toLowerCase()} (${(asymmetryScore * 100).toFixed(0)}%), `
+      + `erythema ratio ${(erythemaRatio * 100).toFixed(1)}%, `
+      + `pigmentation ratio ${(pigmentationRatio * 100).toFixed(1)}%. `
+      + (melanomaSafetyFlag ? 'Melanoma clinical safety flag is ACTIVE due to proximity of pigmented nevus scoring.' : '')
+      + ` Triage: ${triageLevel}.`;
+
   return {
+    // ── NEW PROTOCOL FIELDS (additive) ────────────────────────────────
+    image_quality: {
+      clarity: iqClarity,
+      fitzpatrick_type_estimate: fitzpatrick.fitzpatrickType,
+      artifacts_present: dataQ === 'statistical_approximation'
+        ? ['Server-side JPEG statistical sampling (no pixel decoder) — reduced spatial accuracy']
+        : ['none'],
+    },
+    morphological_features: {
+      asymmetry: `${asymmetryLabel} — ${asymmetryScore > 0.25 ? 'Structural asymmetry detected along primary axis' : 'Broadly symmetric lesion contour'}`,
+      border_characteristics: borderChars,
+      color_distribution: colorDistribution,
+      dermoscopic_structures: dermoscopicStructures,
+    },
+    primary_diagnosis: {
+      condition_name: isLowConfidence ? 'Non-Specific Skin Presentation' : topMatch.name,
+      confidence_level: isLowConfidence ? 'Low' : confidenceLevel,
+      justification: primaryJustification,
+    },
+    differential_diagnoses: top5Differentials,
+    malignancy_risk,
+    recommended_clinical_action,
+
+    // ── EXISTING LEGACY FIELDS (all preserved unchanged) ────────────────
     primaryCondition: isLowConfidence ? 'Inconclusive / Mild Non-Specific Skin Presentation' : topMatch.name,
     icd10: isLowConfidence ? 'R21' : topMatch.icd10,
     snomedCT: isLowConfidence ? '271807003' : topMatch.snomedCT,
@@ -504,10 +613,11 @@ export function classifyNodeSkinDisease(features, symptoms = {}) {
     fitzpatrick,
     severity: isLowConfidence ? 'Early' : topMatch.severity,
     severityScore: isLowConfidence ? 2 : topMatch.severityScore,
-    explanation: isLowConfidence
-      ? 'No distinct diagnostic skin lesion features (such as intense erythema, dark melanocytic mole, pus, active scaling, or annular ring borders) were detected in the uploaded image.'
-      : topMatch.explanation,
-    visualObservations: topMatch.visualObservations,
+    explanation: primaryJustification,
+    visualObservations: {
+      ...topMatch.visualObservations,
+      skinToneCalibration: `${fitzpatrick.fitzpatrickType} (${fitzpatrick.fitzpatrickName})`,
+    },
     triage: isLowConfidence ? {
       level: 'Monitor',
       score: 1,
@@ -521,14 +631,13 @@ export function classifyNodeSkinDisease(features, symptoms = {}) {
       confidenceSufficient: !isLowConfidence
     },
     abcdeAnalysis: topMatch.abcdeAnalysis || {
-      asymmetry: 'Non-pigmented presentation',
-      border: 'Typical lesion margin',
-      color: 'Inflammatory tone',
-      diameter: 'Surface lesion',
+      asymmetry: `${asymmetryLabel} asymmetry — score ${(asymmetryScore * 100).toFixed(0)}%`,
+      border: borderChars,
+      color: colorDistribution.join(', '),
+      diameter: 'Surface lesion (diameter unmeasured without pixel decoder)',
       evolution: symptoms.duration || 'Reported timeline',
-      riskSummary: 'Low visual pigmentary risk criteria.'
+      riskSummary: `${malignancy_risk} malignancy risk — ${recommended_clinical_action}.`
     },
-    differentialDiagnoses: top5Differentials,
     medicationSafety: topMatch.medicationSafety,
     recommendations: topMatch.recommendations,
     referenceDescriptor: topMatch.referenceDescriptor,

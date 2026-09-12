@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.ai_skin_disease_detection_system_ap.twa",
+        "sha256_cert_fingerprints": ["B5:B8:F3:D3:1F:B2:7D:DE:B6:91:F3:37:4C:DA:99:A3:FF:DB:02:5B:AC:6E:12:36:37:E3:64:48:29:BB:62:CD"]
+      }
+    }]
