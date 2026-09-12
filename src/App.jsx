@@ -339,16 +339,8 @@ export default function App() {
 
       {/* Production Clinical Footer */}
       <footer className="w-full border-t border-slate-800/80 bg-slate-950/95 py-4 px-6 text-xs text-slate-500 mt-auto text-center">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-3 text-slate-400">
-          <div className="flex items-center justify-center gap-2 shrink-0">
-            <img 
-              src="/ai_skin_disease_detector_icon_S_512x512.png" 
-              alt="SkinScan Logo" 
-              className="w-5 h-5 rounded-lg object-cover border border-cyan-500/40"
-            />
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-slate-400 text-center">
+        <div className="max-w-6xl mx-auto flex items-center justify-center text-[11px] font-medium text-slate-400 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
             <span>Engineered by Sachin Kumar , Saif Sayyed , Priyanshu Duratkar , Bhushan Nagdeve , Sanmay Gurudeo</span>
             <span className="hidden sm:inline text-slate-600">•</span>
             <span>All Clinical AI Rights Reserved</span>
