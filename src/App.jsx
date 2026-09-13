@@ -31,6 +31,8 @@ const dataURLtoBlob = (dataurl) => {
   return new Blob([u8arr], { type: mime });
 };
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/predict$/, '');
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('scan'); // 'scan' | 'history' | 'locator' | 'doctor_dashboard' | 'admin_dashboard'
   const [workflowStep, setWorkflowStep] = useState('capture'); // 'capture' | 'quality_check' | 'preprocessing' | 'questionnaire' | 'analyzing' | 'results'
@@ -124,14 +126,13 @@ export default function App() {
     const hostname = typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost';
     const protocol = typeof window !== 'undefined' && window.location ? window.location.protocol : 'http:';
 
-    const candidateEndpoints = [];
-    if (import.meta.env.VITE_API_URL) {
-      candidateEndpoints.push(import.meta.env.VITE_API_URL);
-    }
+    const candidateEndpoints = [`${API_BASE_URL}/predict`];
     if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
       candidateEndpoints.push(`${protocol}//${hostname}:8000/predict`);
     }
-    candidateEndpoints.push('http://localhost:8000/predict');
+    if (!candidateEndpoints.includes('http://localhost:8000/predict')) {
+      candidateEndpoints.push('http://localhost:8000/predict');
+    }
 
     // Convert Base64 image to Blob binary format
     let imageBlob = null;
