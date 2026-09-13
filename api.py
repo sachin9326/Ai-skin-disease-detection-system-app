@@ -26,12 +26,21 @@ clip_model = clip_model.to(device)
 clip_model.eval()
 clip_tokenizer = open_clip.get_tokenizer('ViT-B-32')
 
-# Gatekeeper comparison prompts
-PROMPTS = [
-    "a clinical close-up dermoscopy photo of human skin lesion or mole",
-    "a non-medical photo, landscape, celestial object, moon, animal, room, face or object"
+# 1. Broad & Strict Gatekeeper Prompts
+SKIN_PROMPTS = [
+    "a close-up macro dermatoscopy image of human skin mole or skin cancer",
+    "a microscopic medical photo of a skin lesion"
 ]
-text_tokens = clip_tokenizer(PROMPTS).to(device)
+
+NON_SKIN_PROMPTS = [
+    "a photo of everyday objects, desk, stationary, books, pens, furniture, or room",
+    "a photo of a person's full face, eyes, hair, clothes, or landscape",
+    "a screenshot, paper document, certificate, text, or digital graphic"
+]
+
+ALL_PROMPTS = SKIN_PROMPTS + NON_SKIN_PROMPTS
+text_tokens = clip_tokenizer(ALL_PROMPTS).to(device)
+
 with torch.no_grad():
     text_features = clip_model.encode_text(text_tokens)
     text_features /= text_features.norm(dim=-1, keepdim=True)
@@ -74,16 +83,21 @@ async def predict(file: UploadFile = File(...)):
     with torch.no_grad():
         image_features = clip_model.encode_image(clip_img)
         image_features /= image_features.norm(dim=-1, keepdim=True)
-        similarity = (100.0 * image_features @ text_features.T).softmax(dim=-1)
-        skin_score = similarity[0][0].item()
-        non_skin_score = similarity[0][1].item()
+        
+        # Softmax similarity across all reference classes
+        logits = (100.0 * image_features @ text_features.T)
+        probs = logits.softmax(dim=-1)[0]
+        
+        # Skin probability (first 2 prompts) vs Non-Skin probability (last 3 prompts)
+        skin_prob = probs[:len(SKIN_PROMPTS)].sum().item()
+        non_skin_prob = probs[len(SKIN_PROMPTS):].sum().item()
 
-    # Agar non-skin score zyada hai ya skin confidence 60% se kam hai:
-    if non_skin_score > skin_score or skin_score < 0.60:
+    # Diagnostic threshold: actual dermoscopy images typically score > 0.75 skin probability
+    if skin_prob < 0.75 or non_skin_prob > skin_prob:
         return {
             "valid": False,
             "error_type": "INVALID_IMAGE",
-            "message": "Invalid scan: No valid skin lesion detected. Please upload a clear dermoscopic photo of the skin lesion."
+            "message": "Invalid scan: No valid skin lesion detected. Please upload a clear, focused dermoscopic photo of a skin lesion."
         }
 
     # --- HAM10000 PREDICTION ---
@@ -128,3 +142,8 @@ async def predict(file: UploadFile = File(...)):
         "recommendation": top_info.get("recommendation", ""),
         "top_3": results
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("api:app", host="0.0.0.0", port=port)

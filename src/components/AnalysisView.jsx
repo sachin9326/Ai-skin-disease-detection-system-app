@@ -12,12 +12,16 @@ import confetti from 'canvas-confetti';
 export default function AnalysisView({ 
   isLoading, 
   analysisData, 
+  analysisResult: propAnalysisResult,
   imageSrc, 
   onSaveToHistory, 
   isSaved, 
   onFindDermatologist, 
-  onNewScan 
+  onNewScan,
+  onBack
 }) {
+  const effectiveAnalysisData = propAnalysisResult || analysisData;
+  const handleBackAction = onBack || onNewScan;
   const [loadingStep, setLoadingStep] = useState(0);
   const [showCaseSummaryModal, setShowCaseSummaryModal] = useState(false);
 
@@ -35,7 +39,7 @@ export default function AnalysisView({
         setLoadingStep((prev) => (prev + 1) % loadingMessages.length);
       }, 1200);
       return () => clearInterval(interval);
-    } else if (analysisData && !analysisData?.uncertaintySystem?.isUncertain) {
+    } else if (effectiveAnalysisData && !effectiveAnalysisData?.uncertaintySystem?.isUncertain) {
       try {
         confetti({
           particleCount: 25,
@@ -45,7 +49,7 @@ export default function AnalysisView({
         });
       } catch (e) {}
     }
-  }, [isLoading, analysisData]);
+  }, [isLoading, effectiveAnalysisData]);
 
   if (isLoading) {
     return (
@@ -79,14 +83,14 @@ export default function AnalysisView({
     );
   }
 
-  if (!analysisData) {
+  if (!effectiveAnalysisData) {
     return (
       <div className="w-full max-w-xl mx-auto p-6 bg-slate-900 border border-slate-800 rounded-3xl text-center space-y-4 my-8 shadow-xl">
         <AlertTriangle className="w-12 h-12 text-amber-400 mx-auto" />
         <h3 className="text-lg font-bold text-slate-100">Unable to Display Analysis Report</h3>
         <p className="text-xs text-slate-400">The feature extraction completed with non-standard parameters. Please try scanning another image.</p>
         <button
-          onClick={onNewScan}
+          onClick={handleBackAction}
           className="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 text-xs font-black cursor-pointer"
         >
           Perform New Scan
@@ -95,7 +99,7 @@ export default function AnalysisView({
     );
   }
 
-  const analysisResult = analysisData;
+  const analysisResult = effectiveAnalysisData;
 
   const {
     primaryCondition,
@@ -331,11 +335,12 @@ export default function AnalysisView({
 
           <div className="md:col-span-8 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-black border shadow-xs transition-colors ${getConfidenceBadgeStyle(confidence)}`}>
-                Confidence: {confidence}%
+              <span className="px-3 py-1 rounded-full bg-cyan-950/80 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                Confidence: {analysisResult?.confidence || analysisData?.confidence || 0}%
               </span>
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-200 border border-slate-700 shadow-xs">
-                Stage: {severity}
+
+              <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700">
+                Stage: {analysisResult?.severity || analysisData?.severity || "Evaluation"}
               </span>
               {analysisData.icd10 && (
                 <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-black bg-teal-500/10 text-teal-300 border border-teal-500/30 shadow-xs">
@@ -350,34 +355,38 @@ export default function AnalysisView({
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
-                {primaryCondition}
+              <h2 className="text-3xl font-bold text-white tracking-wide">
+                {analysisResult?.prediction || analysisData?.prediction || primaryCondition || "Condition Identified"}
               </h2>
             </div>
 
-            {/* 3-Model Ensemble Confidence Breakdown */}
-            {analysisData.ensembleBreakdown && (
-              <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
-                <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-200">
-                  <span>3-Model Ensemble AI Pipeline Breakdown</span>
-                  <span className="text-cyan-300 font-mono font-black">Combined: {analysisData.ensembleBreakdown.ensembleScore}%</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-[10px] font-mono text-slate-300">
-                  <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-xs">
-                    <span className="block text-slate-400 font-bold">Model A (Vision):</span>
-                    <span className="text-teal-300 font-black">{analysisData.ensembleBreakdown.visualFeatureModelA}%</span>
+            <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 mt-4">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                Top Differential Diagnoses
+              </h3>
+              <div className="space-y-3">
+                {(analysisResult?.top_3 || analysisData?.top_3 || []).map((item, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between text-xs text-slate-300">
+                      <span>{item.disease_name} ({item.severity})</span>
+                      <span className="text-cyan-400 font-bold">{item.confidence}%</span>
+                    </div>
+                    <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${
+                          item.severity.includes("Malignant")
+                            ? "bg-rose-500"
+                            : item.severity.includes("Precancerous")
+                            ? "bg-amber-500"
+                            : "bg-cyan-500"
+                        }`}
+                        style={{ width: `${item.confidence}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-xs">
-                    <span className="block text-slate-400 font-bold">Model B (Saliency):</span>
-                    <span className="text-cyan-300 font-black">{analysisData.ensembleBreakdown.saliencyTextureModelB}%</span>
-                  </div>
-                  <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-xs">
-                    <span className="block text-slate-400 font-bold">Model C (Context):</span>
-                    <span className="text-blue-300 font-black">{analysisData.ensembleBreakdown.multimodalContextModelC}%</span>
-                  </div>
-                </div>
+                ))}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -410,35 +419,6 @@ export default function AnalysisView({
                 {analysisResult?.recommendation || "Follow up with a licensed medical professional for formal clinical evaluation."}
               </p>
             </div>
-          </div>
-        </div>
-
-        <div className="mt-6 p-4 bg-slate-900/60 rounded-xl border border-slate-800">
-          <h3 className="text-sm font-semibold text-slate-200 mb-3 uppercase tracking-wider">
-            Top Differential Diagnoses
-          </h3>
-          
-          <div className="space-y-3">
-            {analysisResult?.top_3?.map((item, idx) => (
-              <div key={idx} className="space-y-1">
-                <div className="flex justify-between text-xs text-slate-300">
-                  <span className="font-medium">{item.disease_name} ({item.severity})</span>
-                  <span className={`font-extrabold ${getConfidenceTextColor(item.confidence)}`}>{item.confidence}%</span>
-                </div>
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${
-                      item.severity.includes("Malignant") 
-                        ? "bg-rose-500" 
-                        : item.severity.includes("Precancerous") 
-                        ? "bg-amber-500" 
-                        : "bg-cyan-500"
-                    }`}
-                    style={{ width: `${item.confidence}%` }}
-                  />
-                </div>
-              </div>
-            ))}
           </div>
         </div>
         {morphological_features && (

@@ -110,18 +110,20 @@ export default function App() {
 
   // Execute AI Vision & Context Analysis
   const handleStartAnalysis = async () => {
-    if (!currentImage) {
-      console.error("No image selected.");
-      return;
-    }
+    if (!currentImage) return;
 
-    setIsLoading(true);
+    const setIsAnalyzing = setIsLoading;
+    const setCurrentStep = (step) => setWorkflowStep(step === 'analysis' ? 'results' : step);
+
+    setIsAnalyzing(true);
     let resultData = null;
+    let gatekeeperRejected = false;
+    let rejectionMessage = "";
 
-    // Determine candidate API URLs (Environment Variable, Mobile LAN IP, Localhost)
+    // Candidate backend API endpoints
     const hostname = typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost';
     const protocol = typeof window !== 'undefined' && window.location ? window.location.protocol : 'http:';
-    
+
     const candidateEndpoints = [];
     if (import.meta.env.VITE_API_URL) {
       candidateEndpoints.push(import.meta.env.VITE_API_URL);
@@ -131,21 +133,21 @@ export default function App() {
     }
     candidateEndpoints.push('http://localhost:8000/predict');
 
-    // 1. Convert Base64 image string to Blob if required
+    // Convert Base64 image to Blob binary format
     let imageBlob = null;
     try {
       imageBlob = typeof currentImage === 'string' && currentImage.startsWith('data:')
         ? dataURLtoBlob(currentImage)
         : currentImage;
     } catch (e) {
-      console.warn("Image blob conversion note:", e);
+      console.warn("Blob conversion note:", e);
     }
 
-    // Try API endpoints with 3-second abort timeout per endpoint
+    // Try candidate API endpoints with 4-second connection timeout
     for (const endpoint of candidateEndpoints) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
 
         const formData = new FormData();
         formData.append("file", imageBlob || currentImage, "scan.jpg");
@@ -159,51 +161,31 @@ export default function App() {
 
         if (res.ok) {
           const data = await res.json();
-          if (data && data.valid !== false) {
-            resultData = {
-              primaryCondition: data.prediction || data.primaryCondition,
-              confidence: data.confidence,
-              severity: data.severity || 'Mid',
-              explanation: data.description || data.explanation || '',
-              observation: data.observation || '',
-              description: data.description || '',
-              recommendation: data.recommendation || '',
-              top_3: data.top_3 || [],
-              differentialDiagnoses: data.top_3 ? data.top_3.map(d => ({
-                name: d.disease_name,
-                confidence: d.confidence,
-                description: `Severity: ${d.severity}`,
-                supportingFeatures: [`Visual pattern match`],
-                unfittingFeatures: [],
-                distinguishingFactors: `Class code: ${d.disease_code}`
-              })) : [],
-              triage: {
-                level: data.severity === 'Highly Malignant' || data.severity === 'Malignant (Cancerous)' ? 'Emergency' :
-                       data.severity === 'Precancerous' ? 'Urgent (24-48h)' : 'Routine Consultation',
-                score: data.severity?.includes('Malignant') ? 5 : 2,
-                redFlags: data.severity?.includes('Malignant') ? ['Potential Malignant Architecture'] : [],
-                escalationReason: 'Automated triage based on clinical feature severity.'
-              },
-              modelMetadata: {
-                version: 'v3.2-FastAPI-ResNet18-CLIP',
-                provider: 'FastAPI PyTorch ResNet-18 + Zero-Shot CLIP Gatekeeper',
-                timestamp: new Date().toISOString()
-              }
-            };
+          if (data.valid === false) {
+            gatekeeperRejected = true;
+            rejectionMessage = data.message;
             break;
-          } else if (data && data.message) {
-            console.warn("FastAPI gatekeeper notice:", data.message);
           }
+
+          resultData = data;
+          break;
         }
       } catch (err) {
         console.warn(`API endpoint ${endpoint} connection skipped:`, err.message);
       }
     }
 
-    // 2. Seamless Client-Side Local AI Fallback (if remote/FastAPI server is not running or unreachable on mobile/web)
+    // Gatekeeper rejection handling
+    if (gatekeeperRejected) {
+      alert(rejectionMessage);
+      setIsAnalyzing(false);
+      return;
+    }
+
+    // Client-side local AI fallback if remote Python server is offline/unreachable on production host
     if (!resultData) {
       try {
-        console.log("FastAPI backend unreachable or offline. Executing client-side Hybrid AI Engine...");
+        console.log("Remote backend unreachable. Executing client-side hybrid AI engine fallback...");
         resultData = await analyzeSkinImageLocally(currentImage, patientSymptoms);
       } catch (fallbackErr) {
         console.error("Local AI inference error:", fallbackErr);
@@ -212,12 +194,12 @@ export default function App() {
 
     if (resultData) {
       setAnalysisResult(resultData);
-      setWorkflowStep('results');
+      setCurrentStep("analysis");
     } else {
-      alert("Unable to complete analysis. Please try uploading another photo.");
+      alert("Unable to complete skin analysis. Please ensure a clear photo is uploaded.");
     }
 
-    setIsLoading(false);
+    setIsAnalyzing(false);
   };
 
 
@@ -311,11 +293,13 @@ export default function App() {
               <AnalysisView
                 isLoading={isLoading}
                 analysisData={analysisResult}
+                analysisResult={analysisResult}
                 imageSrc={currentImage}
                 onSaveToHistory={handleSaveCurrentScan}
                 isSaved={isSaved}
                 onFindDermatologist={() => setActiveTab('locator')}
                 onNewScan={handleResetScan}
+                onBack={() => setWorkflowStep('capture')}
               />
             )}
           </>
